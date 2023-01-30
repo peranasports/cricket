@@ -5,6 +5,7 @@ export const getActivities = async (token) => {
   myHeaders.append("Authorization", "Bearer " + token);
 
   var requestOptions = {
+    mode: "no-cors",
     method: "GET",
     headers: myHeaders,
     redirect: "follow",
