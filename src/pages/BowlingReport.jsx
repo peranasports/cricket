@@ -29,10 +29,11 @@ function BowlingReport() {
   const playerRef = useRef();
   const [videoUrl, setVideoUrl] = useState(null);
   const [deliveries, setDeliveries] = useState([]);
-  const [minLat, setMinLat] = useState(0)
-  const [minLong, setMinLong] = useState(0)
-  const [maxLat, setMaxLat] = useState(0)
-  const [maxLong, setMaxLong] = useState(0)
+  const [minLat, setMinLat] = useState(0);
+  const [minLong, setMinLong] = useState(0);
+  const [maxLat, setMaxLat] = useState(0);
+  const [maxLong, setMaxLong] = useState(0);
+  const [activityName, setActivityName] = useState('')
   const [bowlingObject, setBowlingObject] = useState(null);
   const [videoOffset, setVideoOffset] = useState(0);
   const [firstTime, setFirstTime] = useState(0);
@@ -232,7 +233,8 @@ function BowlingReport() {
     var maxx = -1000;
     var maxy = -1000;
     for (var nx = 0; nx < xdels.length; nx++) {
-      var xdel = xdels[nx]
+      var xdel = xdels[nx];
+      if (xdel.playersensors === undefined) continue;
       for (var n = 0; n < xdel.playersensors.length; n++) {
         var ps = xdel.playersensors[n];
         if (ps.lat === 0 || ps.long === 0) continue;
@@ -242,10 +244,10 @@ function BowlingReport() {
         miny = ps.long < miny ? ps.long : miny;
       }
     }
-    setMinLat(minx)
-    setMinLong(miny)
-    setMaxLat(maxx)
-    setMaxLong(maxy)
+    setMinLat(minx);
+    setMinLong(miny);
+    setMaxLat(maxx);
+    setMaxLong(maxy);
 
     var bobj = { activityId: activity.id, deliveries: xdels };
     localStorage.setItem("BowlingObject", JSON.stringify(bobj));
@@ -309,25 +311,76 @@ function BowlingReport() {
     );
   };
 
+  const saveToPC = (fileData) => {
+    // const fileData = JSON.stringify(contactsData);
+    const blob = new Blob([fileData], {type: "text/plain"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'filename.json';
+    link.href = url;
+    link.click();
+  }
+
+  // useEffect(() => {
+  //   setVideoUrl((videoFileUrl === null) !== null ? videoFileUrl : vrl);
+  //   var bobj = bowlingObject;
+  //   if (bobj === null) {
+  //     bobj = localStorage.getItem("BowlingObject");
+  //   }
+  //   if (bobj !== null) {
+  //     var bo = JSON.parse(bobj);
+  //     setBowlingObject(bo);
+  //     if (bo.activityId === activity.id) {
+  //       setDeliveries(bo.deliveries);
+  //       var minx = 0;
+  //       var miny = 1000;
+  //       var maxx = -1000;
+  //       var maxy = -1000;
+  //       for (var nx = 0; nx < bo.deliveries.length; nx++) {
+  //         var xdel = bo.deliveries[nx];
+  //         if (xdel.playersensors === undefined) continue;
+  //         for (var n = 0; n < xdel.playersensors.length; n++) {
+  //           var ps = xdel.playersensors[n];
+  //           if (ps.lat === 0 || ps.long === 0) continue;
+  //           maxx = ps.lat > maxx ? ps.lat : maxx;
+  //           maxy = ps.long > maxy ? ps.long : maxy;
+  //           minx = ps.lat < minx ? ps.lat : minx;
+  //           miny = ps.long < miny ? ps.long : miny;
+  //         }
+  //       }
+  //       setMinLat(minx);
+  //       setMinLong(miny);
+  //       setMaxLat(maxx);
+  //       setMaxLong(maxy);
+  //     }
+  //     else
+  //     {
+  //       setDeliveries([]);
+  //       getAthletesDeliveries();
+  //     }
+  //   } else {
+  //     setDeliveries([]);
+  //     getAthletesDeliveries();
+  //   }
+  // }, [activity.id]);
+
   useEffect(() => {
-    setVideoUrl((videoFileUrl === null) !== null ? videoFileUrl : vrl);
-    var bobj = bowlingObject;
-    if (bobj === null) {
-      bobj = localStorage.getItem("BowlingObject");
-    }
-    if (bobj !== null) {
-      var bo = JSON.parse(bobj);
+      var bo = JSON.parse(deliveriesFileData);
+      setVideoUrl(videoFileUrl !== null ? videoFileUrl : bo.videoUrl);
+      setVideoOffset(bo.videoOffset)
+      localStorage.setItem(
+        "videoOffset",
+        bo.videoOffset
+      );  
       setBowlingObject(bo);
-      if (bo.activityId === activity.id) {
         setDeliveries(bo.deliveries);
         var minx = 0;
         var miny = 1000;
         var maxx = -1000;
         var maxy = -1000;
         for (var nx = 0; nx < bo.deliveries.length; nx++) {
-          var xdel = bo.deliveries[nx]
-          console.log("nx=", nx, "  ", xdel.playersensors)
-          if (xdel.playersensors === undefined) continue
+          var xdel = bo.deliveries[nx];
+          if (xdel.playersensors === undefined) continue;
           for (var n = 0; n < xdel.playersensors.length; n++) {
             var ps = xdel.playersensors[n];
             if (ps.lat === 0 || ps.long === 0) continue;
@@ -337,16 +390,11 @@ function BowlingReport() {
             miny = ps.long < miny ? ps.long : miny;
           }
         }
-        setMinLat(minx)
-        setMinLong(miny)
-        setMaxLat(maxx)
-        setMaxLong(maxy)
-      }
-    } else {
-      setDeliveries([]);
-      getAthletesDeliveries();
-    }
-  }, [activity.id]);
+        setMinLat(minx);
+        setMinLong(miny);
+        setMaxLat(maxx);
+        setMaxLong(maxy);
+  }, [])
 
   if (!loading) {
     if (deliveries.length === 0) {
@@ -390,7 +438,7 @@ function BowlingReport() {
             <label htmlFor="my-drawer-5" className="drawer-overlay"></label>
             <div className=""></div>
             <DeliveriesList
-              activity={activity}
+              activityName={activityName}
               deliveries={deliveries}
               deliveryClicked={(dindex) => onDeliveryClicked(dindex)}
               bowlerSelected={(bowler) => onBowlerSelected(bowler)}

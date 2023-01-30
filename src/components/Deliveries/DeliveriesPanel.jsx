@@ -32,13 +32,13 @@ function DeliveriesPanel({
     if (del.cricket_delivery_au === undefined) return 0;
     switch (parameter) {
       case 0:
-        return del.cricket_delivery_au.runup_velocity;
+        return del.cricket_delivery_au.runup_velocity * 3.6;
       case 1:
         return del.cricket_delivery_au.runup_distance;
       case 2:
-        return del.cricket_delivery_au.delivery_runup_avg_velocity;
+        return del.cricket_delivery_au.delivery_runup_avg_velocity * 3.6;
       case 3:
-        return del.cricket_delivery_au.delivery_runup_max_velocity;
+        return del.cricket_delivery_au.delivery_runup_max_velocity * 3.6;
       case 4:
         return del.cricket_delivery_au.delivery_load;
       case 5:
@@ -64,7 +64,7 @@ function DeliveriesPanel({
       var del = selectedDeliveries[ne];
       var val = getDeliveryValue(del)
       maxval = val > maxval ? val : maxval;
-      var selcol = currentDeliveryIndex === ne ? "lightgreen" : "lightgray";
+      var selcol = currentDeliveryIndex === ne ? "pink" : "lightgray";
       ctx.fillStyle = selcol;
       ctx.fillRect(x, y, width - xmargin, barheight - 2);
       drawGradientRect({ctx: ctx, x: x, y: y, width: del.BallSpeed * 1.5, height: barheight - 2},{colorStops: 2, color1:'#8ed6ff', color2:'#004cb3'})
@@ -106,17 +106,32 @@ function DeliveriesPanel({
     var scale = (width - xmargin) / (maxval * 1.2);
     var lastval = -1;
     var lasty = y;
-    ctx.strokeStyle = "blue";
+    ctx.strokeStyle = "red";
     ctx.lineWidth = 3;
     for (var ne = 0; ne < selectedDeliveries.length; ne++) {
       var del = selectedDeliveries[ne];
       var val = getDeliveryValue(del)
-      if (lastval !== -1) {
+      writeText(
+        { ctx: ctx, text: val.toFixed(2), x: x - 4 + val * scale, y: y + 2, width: 200 },
+        {
+          textAlign: "right",
+          fontFamily: "Arial",
+          fontSize: fontsize,
+          color: 'black',
+        }
+      );
+
         ctx.beginPath();
-        ctx.moveTo(x + lastval * scale, lasty);
-        ctx.lineTo(x + val * scale, y + barheight / 2);
+        ctx.moveTo(x + val * scale, y);
+        ctx.lineTo(x + val * scale, y + barheight);
         ctx.stroke();
-      }
+
+      // if (lastval !== -1) {
+      //   ctx.beginPath();
+      //   ctx.moveTo(x + lastval * scale, lasty);
+      //   ctx.lineTo(x + val * scale, y + barheight / 2);
+      //   ctx.stroke();
+      // }
       lastval = val;
       lasty = y + barheight / 2;
       y += barheight;

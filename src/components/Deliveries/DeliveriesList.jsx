@@ -3,7 +3,7 @@ import BowlerStatsPanel from "./BowlerStatsPanel";
 import DeliveriesPanel from "./DeliveriesPanel";
 
 function DeliveriesList({
-  activity,
+  activityName,
   deliveries,
   deliveryClicked,
   bowlerSelected,
@@ -77,7 +77,7 @@ function DeliveriesList({
   return (
     <>
       <div className="w-full h-full">
-        <div className="mt-2 text-xl font bold">{activity.name}</div>
+        <div className="mt-2 text-xl font bold">{activityName}</div>
         <div className="mt-2">
           <select
             className="select select-info w-full max-w-xs"

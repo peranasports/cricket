@@ -64,13 +64,16 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
         <div className="card w-full bg-base-100 shadow-xl">
           <div className="flex mx-6 justify-between">
             <h2 className="card-title">
-              Over {delivery.Over - 1}.{delivery.BallInOver} - {delivery.Bowler}{" "}
-              to {delivery.Striker} - {getRuns(delivery)} runs
+              Over {delivery.Over - 1}.{delivery.BallInOver}
             </h2>
             <button className="btn btn-sm btn-primary" onClick={doSynchVideo}>
               Synch Video
             </button>
           </div>
+          <h2 className="ml-6 card-title">
+              {delivery.Bowler}{" "}
+              to {delivery.Striker}
+            </h2>
           <div className="flex justify-between">
             <div className="stats shadow">
               <div className="stat place-items-center">
