@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { writeTextCentre, writeText, drawGradientRect } from "../../utils/utils";
 
-const barheight = 20;
+const barheight = 24;
 const topmargin = 40;
 const bottommargin = 40;
 
@@ -15,6 +15,7 @@ function DeliveriesPanel({
   // const [selectedDeliveries, setSelectedDeliveries] = useState([]);
   const canvasRef = useRef(null);
   const ref = useRef(null);
+  const [scale, setScale] = useState(1)
 
   function getRuns(del) {
     const r1 = del.BatScore === undefined ? 0 : Number.parseInt(del.BatScore);
@@ -26,6 +27,16 @@ function DeliveriesPanel({
       del.PenaltyRuns === undefined ? 0 : Number.parseInt(del.PenaltyRuns);
 
     return r1 + r2 + r3 + r4 + r5 + r6;
+  }
+
+  function getExtras(del) {
+    var s = ""
+    if (del.Wides !== undefined && Number.parseInt(del.Wides) !== 0) s += del.Wides + "w "
+    if (del.NoBalls !== undefined && Number.parseInt(del.NoBalls) !== 0) s += del.NoBalls + "nb "
+    if (del.Byes !== undefined && Number.parseInt(del.Byes) !== 0) s += del.Byes + "b "
+    if (del.LegByes !== undefined && Number.parseInt(del.LegByes) !== 0) s += del.LegByes + "lb "
+    if (del.PenaltyRuns !== undefined && Number.parseInt(del.PenaltyRuns) !== 0) s += del.PenaltyRuns + "pr "
+    return s
   }
 
   const getDeliveryValue = (del) => {
@@ -55,8 +66,10 @@ function DeliveriesPanel({
   const draw = (ctx) => {
     const canvas = canvasRef.current;
     var xmargin = 40;
-    var width = canvas.width / 2;
-    var fontsize = 14;
+    var cwidth = canvas.width/2 * scale
+    var width = cwidth * scale;
+    var fontsize = 14 * scale;
+    var bh = barheight * scale
     var maxval = 0;
     var y = topmargin;
     var x = xmargin;
@@ -64,10 +77,11 @@ function DeliveriesPanel({
       var del = selectedDeliveries[ne];
       var val = getDeliveryValue(del)
       maxval = val > maxval ? val : maxval;
-      var selcol = currentDeliveryIndex === ne ? "pink" : "lightgray";
-      ctx.fillStyle = selcol;
-      ctx.fillRect(x, y, width - xmargin, barheight - 2);
-      drawGradientRect({ctx: ctx, x: x, y: y, width: del.BallSpeed * 1.5, height: barheight - 2},{colorStops: 2, color1:'#8ed6ff', color2:'#004cb3'})
+      var selcol = currentDeliveryIndex === ne ? "darkgreen" : "gray";
+      // ctx.fillStyle = selcol;
+      // ctx.fillRect(x, y, width - xmargin, bh - 2);
+      drawGradientRect({ctx: ctx, x: x, y: y, width: width - xmargin, height: bh - 2},{colorStops: 2, color1:'lightgray', color2:selcol})
+      drawGradientRect({ctx: ctx, x: x, y: y, width: del.BallSpeed * 1.5, height: bh - 2},{colorStops: 2, color1:'#8ed6ff', color2:'#004cb3'})
       var label = (del.Over - 1).toString() + "." + del.BallInOver.toString();
       writeText(
         { ctx: ctx, text: label, x: 0, y: y, width: 100 },
@@ -86,24 +100,35 @@ function DeliveriesPanel({
       if (runs === 6) {
         ctx.fillStyle = "green";
       }
-      ctx.fillRect(x + 1, y + 1, 20, barheight - 4);
+      ctx.fillRect(x + 1, y + 1, 20, bh - 4);
       writeTextCentre(
-        { ctx: ctx, text: runs.toString(), x: x + 1, y: y + 3, width: 20 },
+        { ctx: ctx, text: runs.toString(), x: x + 1, y: y + 3 * scale, width: 20 * scale },
         { fontsize: fontsize, color: "white" }
       );
+      
+      var sextra = getExtras(del)
+      if (sextra !== "")
+      {
+        writeTextCentre(
+          { ctx: ctx, text: sextra, x: x + 18 * scale, y: y + 4 * scale, width: 40 * scale },
+          { fontsize: fontsize * 0.8, color: "white" }
+        );  
+      }
+
+
       if (del.BatterOut.length > 0) {
         ctx.fillStyle = "red";
-        ctx.fillRect(width - 20, y + 1, 18, barheight - 4);
+        ctx.fillRect(width - 20, y + 1, 18, bh - 4);
         writeTextCentre(
-          { ctx: ctx, text: "W", x: width - 20 - 1, y: y + 3, width: 20 },
+          { ctx: ctx, text: "W", x: width - 20 - 1, y: y + 3, width: 20 * scale },
           { fontsize: fontsize, color: "white" }
         );
       }
-      y += barheight;
+      y += bh;
     }
     y = topmargin;
     x = xmargin;
-    var scale = (width - xmargin) / (maxval * 1.2);
+    var vscale = (width - xmargin) / (maxval * 1.2);
     var lastval = -1;
     var lasty = y;
     ctx.strokeStyle = "red";
@@ -111,8 +136,9 @@ function DeliveriesPanel({
     for (var ne = 0; ne < selectedDeliveries.length; ne++) {
       var del = selectedDeliveries[ne];
       var val = getDeliveryValue(del)
+      if (val === 0) continue
       writeText(
-        { ctx: ctx, text: val.toFixed(2), x: x - 4 + val * scale, y: y + 2, width: 200 },
+        { ctx: ctx, text: val.toFixed(2), x: x - 4 + val * vscale * scale, y: y + 4 * scale, width: 200 * scale },
         {
           textAlign: "right",
           fontFamily: "Arial",
@@ -122,26 +148,26 @@ function DeliveriesPanel({
       );
 
         ctx.beginPath();
-        ctx.moveTo(x + val * scale, y);
-        ctx.lineTo(x + val * scale, y + barheight);
+        ctx.moveTo(x + val * vscale, y);
+        ctx.lineTo(x + val * vscale, y + bh);
         ctx.stroke();
 
       // if (lastval !== -1) {
       //   ctx.beginPath();
-      //   ctx.moveTo(x + lastval * scale, lasty);
-      //   ctx.lineTo(x + val * scale, y + barheight / 2);
+      //   ctx.moveTo(x + lastval * vscale, lasty);
+      //   ctx.lineTo(x + val * vscale, y + bh / 2);
       //   ctx.stroke();
       // }
       lastval = val;
-      lasty = y + barheight / 2;
-      y += barheight;
+      lasty = y + bh / 2;
+      y += bh;
     }
   };
 
   const onMouseDown = (e) => {
-    var x = e.nativeEvent.offsetX;
-    var y = e.nativeEvent.offsetY;
-    var idx = Math.floor((y - topmargin) / barheight);
+    var x = e.nativeEvent.offsetX / scale;
+    var y = e.nativeEvent.offsetY / scale;
+    var idx = Math.floor((y - topmargin) / barheight * scale);
     // console.log("del idx " + idx)
     setCurrentDeliveryIndex(idx);
     handleClick(selectedDeliveries[idx]);
@@ -158,8 +184,10 @@ function DeliveriesPanel({
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     // context.translate(0.5, 0.5);
-    canvas.width = 320 * 2; //canvas.offsetWidth;
-    canvas.height = (selectedDeliveries.length * barheight + topmargin + bottommargin) * 2; //canvas.offsetHeight;
+    var sc = canvas.offsetWidth / 300
+    setScale(sc)
+    canvas.width = canvas.offsetWidth * 2; //canvas.offsetWidth;
+    canvas.height = (selectedDeliveries.length * barheight * sc + topmargin + bottommargin) * 2; //canvas.offsetHeight;
     canvas.style.width = (canvas.width / 2).toString() + "px";
     canvas.style.height = (canvas.height / 2).toString() + "px";
     const dpi = window.devicePixelRatio;

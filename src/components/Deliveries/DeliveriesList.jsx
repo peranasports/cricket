@@ -107,7 +107,7 @@ function DeliveriesList({
           </select>
         </div>
         <div>
-          <DeliveriesPanel
+          <DeliveriesPanel style={{"width" : "200px"}}
             selectedDeliveries={bowlerDeliveries}
             selectedBowler={selectedBowler}
             parameter={parameter}

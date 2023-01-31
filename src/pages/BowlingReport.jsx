@@ -434,9 +434,9 @@ function BowlingReport() {
               />
             </div>
           </div>
-          <div className="drawer-side w-80">
+          <div className="drawer-side">
             <label htmlFor="my-drawer-5" className="drawer-overlay"></label>
-            <div className=""></div>
+            <div className="" style={{"width" : "320px"}}></div>
             <DeliveriesList
               activityName={activityName}
               deliveries={deliveries}
