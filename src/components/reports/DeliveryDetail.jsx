@@ -90,12 +90,24 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
                 <div className="stat-desc">{getExtras(delivery)}</div>
               </div>
 
+
+<div className="">
 {/* <p>Angle {delivery.HitToAngle}</p>
 <p>Len {delivery.HitToLen}</p>
 <p>Octant {delivery.HitToOctant}</p>
 <p>X {delivery.HitToXPhysical}</p>
 <p>Y {delivery.HitToYPhysical}</p> */}
-
+{/* <p>PitchX {delivery.PitchX}</p>
+<p>PitchY {delivery.PitchY}</p>
+<p>AtBatterX {delivery.AtBatterX}</p>
+<p>AtBatterY {delivery.AtBatterY}</p>
+<p>AtStumpsX {delivery.AtStumpsX}</p>
+<p>AtStumpsY {delivery.AtStumpsY}</p> */}
+</div>
+<div className="">
+{/* <p>MovementInAir {delivery.MovementInAir}</p>
+<p>MovementOffPitch {delivery.MovementOffPitch}</p> */}
+</div>
 
               {/* <div className="stat place-items-center">
               <div className="stat-title">New Registers</div>

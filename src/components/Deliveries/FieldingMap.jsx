@@ -37,28 +37,184 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
       1
     );
 
-    var octant = delivery.HitToOctant
-    var quarterpi = Math.PI/4
-    var leftangles = [-quarterpi * 2, -quarterpi, 0, quarterpi, quarterpi * 2, quarterpi * 3, quarterpi * 4, -quarterpi * 3, -quarterpi * 2]
-    var rightangles = [-quarterpi * 2, -quarterpi * 3, quarterpi * 4, quarterpi * 3, quarterpi * 2, quarterpi, 0, -quarterpi, -quarterpi * 2]
-    if (delivery.StrikerHand === 'Right')
-    {
-        var startangle = rightangles[octant - 1]
-        var endangle = rightangles[octant]
-        drawPieSegment(ctx, canvas.width/4, canvas.width/4, canvas.width/4, startangle, endangle, 'lightgreen', 'lightgreen', 1, true)
-        var angle = (delivery.HitToAngle / 180) * Math.PI + Math.PI / 2
-        var len = (delivery.HitToLen / 100) * canvas.width/4
-        drawPieSegment(ctx, canvas.width/4, canvas.width/4, len, angle, angle, 'black', 'black', 1, true)
+    var octant = delivery.HitToOctant;
+    var quarterpi = Math.PI / 4;
+    if (delivery.NorthernEnd === "N") {
+      var rightangles = [
+        quarterpi * 2,
+        quarterpi,
+        0,
+        -quarterpi,
+        -quarterpi * 2,
+        -quarterpi * 3,
+        quarterpi * 4,
+        quarterpi * 3,
+        quarterpi * 2,
+      ];
+      var leftangles = [
+        quarterpi * 2,
+        quarterpi * 3,
+        quarterpi * 4,
+        -quarterpi * 3,
+        -quarterpi * 2,
+        -quarterpi,
+        0,
+        quarterpi,
+        quarterpi * 2,
+      ];
+      if (delivery.StrikerHand === "Right") {
+        var startangle = rightangles[octant - 1];
+        var endangle = rightangles[octant];
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          canvas.width / 4,
+          startangle,
+          endangle,
+          "green",
+          "green",
+          1,
+          false
+        );
+        var angle = (delivery.HitToAngle / 180) * Math.PI - Math.PI / 2;
+        var len = ((delivery.HitToLen / 100) * canvas.width) / 4;
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          len,
+          angle,
+          angle,
+          "black",
+          "orange",
+          1,
+          true
+        );
+      } else {
+        var startangle = leftangles[octant - 1];
+        var endangle = leftangles[octant];
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          canvas.width / 4,
+          startangle,
+          endangle,
+          "green",
+          "green",
+          1,
+          false
+        );
+        var angle = (-delivery.HitToAngle / 180) * Math.PI - Math.PI / 2;
+        var len = ((delivery.HitToLen / 100) * canvas.width) / 4;
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          len,
+          angle,
+          angle,
+          "black",
+          "orange",
+          1,
+          true
+        );
+      }
+    } else {
+      var leftangles = [
+        -quarterpi * 2,
+        -quarterpi,
+        0,
+        quarterpi,
+        quarterpi * 2,
+        quarterpi * 3,
+        quarterpi * 4,
+        -quarterpi * 3,
+        -quarterpi * 2,
+      ];
+      var rightangles = [
+        -quarterpi * 2,
+        -quarterpi * 3,
+        quarterpi * 4,
+        quarterpi * 3,
+        quarterpi * 2,
+        quarterpi,
+        0,
+        -quarterpi,
+        -quarterpi * 2,
+      ];
+      if (delivery.StrikerHand === "Right") {
+        var startangle = rightangles[octant - 1];
+        var endangle = rightangles[octant];
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          canvas.width / 4,
+          startangle,
+          endangle,
+          "green",
+          "green",
+          1,
+          true
+        );
+        var angle = (delivery.HitToAngle / 180) * Math.PI + Math.PI / 2;
+        var len = ((delivery.HitToLen / 100) * canvas.width) / 4;
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          len,
+          angle,
+          angle,
+          "black",
+          "orange",
+          1,
+          true
+        );
+      } else {
+        var startangle = leftangles[octant - 1];
+        var endangle = leftangles[octant];
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          canvas.width / 4,
+          startangle,
+          endangle,
+          "green",
+          "green",
+          1,
+          false
+        );
+        var angle = (-delivery.HitToAngle / 180) * Math.PI + Math.PI / 2;
+        var len = ((delivery.HitToLen / 100) * canvas.width) / 4;
+        drawPieSegment(
+          ctx,
+          canvas.width / 4,
+          canvas.width / 4,
+          len,
+          angle,
+          angle,
+          "black",
+          "orange",
+          1,
+          false
+        );
+      }
     }
-    else
-    {
-        var startangle = leftangles[octant - 1]
-        var endangle = leftangles[octant]
-        drawPieSegment(ctx, canvas.width/4, canvas.width/4, canvas.width/4, startangle, endangle, 'lightgreen', 'lightgreen', 1, false)
-        var angle = (-delivery.HitToAngle / 180) * Math.PI + Math.PI / 2
-        var len = (delivery.HitToLen / 100) * canvas.width/4
-        drawPieSegment(ctx, canvas.width/4, canvas.width/4, len, angle, angle, 'black', 'black', 1, true)
-    }
+
+    drawEllipseRectangle(
+      ctx,
+      0,
+      0,
+      canvas.width / 2 - 1,
+      canvas.width / 2 - 1,
+      null,
+      "white",
+      1
+    );
 
     var pos = [];
     for (var n = 0; n < delivery.playersensors.length; n++) {
@@ -82,15 +238,15 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
       var ps = pos[n];
       var px = (ps.y - midy) * 100000;
       var py = (ps.x - midx) * 100000;
-    
+
       px = canvas.width / 4 + px * scale;
       py = canvas.width / 2 - (canvas.width / 4 + py * scale);
 
-      if (delivery.NorthernEnd === 'N')
-      {
-        px = canvas.width / 2 - px
-        py = canvas.width / 2 - py
-      }
+      //   if (delivery.NorthernEnd === 'N')
+      //   {
+      //     px = canvas.width / 2 - px
+      //     py = canvas.width / 2 - py
+      //   }
 
       // py = (canvas.width/2 - py)
       // px = px
@@ -147,8 +303,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
     context.scale(dpi, dpi);
 
     // var scale = (canvas.width * 0.8) / ((maxLat - minLat) * 100000);
-    var scale = (canvas.width/2) / ((maxLat - minLat) * 100000)
-    scale = scale * 0.7
+    var scale = canvas.width / 2 / ((maxLat - minLat) * 100000);
+    scale = scale * 0.7;
 
     // draw(context, -37.8201, 144.9824);
     draw(context, scale);
