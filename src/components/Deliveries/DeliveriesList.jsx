@@ -80,7 +80,7 @@ function DeliveriesList({
         <div className="mt-2 text-xl font bold">{activityName}</div>
         <div className="mt-2">
           <select
-            className="select select-info w-full max-w-xs"
+            className="select select-info w-full"
             value={selectedBowler}
             onChange={onBowlerSelected}
           >
@@ -94,7 +94,7 @@ function DeliveriesList({
         </div>
         <div className="mt-2">
           <select
-            className="select select-info w-full max-w-xs"
+            className="select select-info w-full"
             value={parameters[parameter]}
             onChange={onParameterSelected}
           >

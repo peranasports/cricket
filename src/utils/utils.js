@@ -80,6 +80,7 @@ export function drawCircle(ctx, x, y, radius, fill, stroke, strokeWidth) {
     ctx.strokeStyle = stroke
     ctx.stroke()
   }
+  ctx.closePath()
 }
 
 export function drawEllipseRectangle(ctx, x, y, width, height, fill, stroke, strokeWidth)
@@ -88,3 +89,21 @@ export function drawEllipseRectangle(ctx, x, y, width, height, fill, stroke, str
   const my = y + (height / 2)
   drawCircle(ctx, mx, my, width / 2, fill, stroke, strokeWidth)
 }
+
+export function drawPieSegment(ctx, x, y, radius, startangle, endangle, fill, stroke, strokeWidth, clockwise) {
+  ctx.beginPath()
+  ctx.moveTo(x, y)
+  ctx.arc(x, y, radius, startangle, endangle, clockwise)
+  ctx.lineTo(x, y)
+  if (fill) {
+    ctx.fillStyle = fill
+    ctx.fill()
+  }
+  if (stroke) {
+    ctx.lineWidth = strokeWidth
+    ctx.strokeStyle = stroke
+    ctx.stroke()
+  }
+  ctx.closePath()
+}
+

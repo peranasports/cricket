@@ -43,7 +43,7 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
   return (
     <>
       <div className="flex justify-between">
-        {/* <div className="m-4 h-50 w-50 bg-base-100">
+        <div className="m-4 h-50 w-50 bg-base-100">
           <FieldingMap 
             delivery={delivery} 
             minLat={minLat}
@@ -51,8 +51,8 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
             minLong={minLong}
             maxLong={maxLong}
       />
-        </div> */}
-        <div className="h-60 w-80 bg-base-100">
+        </div>
+        {/* <div className="h-60 w-80 bg-base-100">
           <FieldingPosition 
             delivery={delivery} 
             minLat={minLat}
@@ -60,7 +60,7 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
             minLong={minLong}
             maxLong={maxLong}
             />
-        </div>
+        </div> */}
         <div className="card w-full bg-base-100 shadow-xl">
           <div className="flex mx-6 justify-between">
             <h2 className="card-title">
@@ -89,6 +89,13 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
                 </div>
                 <div className="stat-desc">{getExtras(delivery)}</div>
               </div>
+
+{/* <p>Angle {delivery.HitToAngle}</p>
+<p>Len {delivery.HitToLen}</p>
+<p>Octant {delivery.HitToOctant}</p>
+<p>X {delivery.HitToXPhysical}</p>
+<p>Y {delivery.HitToYPhysical}</p> */}
+
 
               {/* <div className="stat place-items-center">
               <div className="stat-title">New Registers</div>
