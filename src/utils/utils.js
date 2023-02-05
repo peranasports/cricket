@@ -36,11 +36,50 @@ export function writeTextCentre(info, style = {}) {
   var xx = x + width / 2 - textWidth / 2;
 
   ctx.beginPath();
-  ctx.font = style.fontSize + "px " + fontFamily;
-  ctx.textAlign = "centre";
+  ctx.font = fontSize + "px " + fontFamily;
+  ctx.textAlign = "left";
   ctx.textBaseline = textBaseline;
   ctx.fillStyle = color;
   ctx.fillText(text, xx, y);
+  ctx.stroke();
+}
+
+export function writeTextWithLineBreak(info, style = {}) {
+  const { ctx, text, x, y, width, height } = info;
+  const {
+    fontSize = 20,
+    fontFamily = "Arial",
+    color = "black",
+    textBaseline = "top",
+    textAlign = "left",
+  } = style;
+
+  ctx.font = fontSize + "px " + fontFamily;
+  ctx.textAlign = textAlign;
+  ctx.textBaseline = textBaseline;
+  ctx.fillStyle = color;
+
+  let lines = [];
+  let lineCount = 0;
+  let tmpTxt = text.split(" ");
+  lines[lineCount] = [];
+  for(let t = 0; t < tmpTxt.length; t++){
+    lines[lineCount].push(tmpTxt[t]);
+    if(ctx.measureText(lines[lineCount].join(" "), ctx.font).width > width) {
+      let lastItem = lines[lineCount].pop();
+      lineCount++;
+      lines[lineCount] = [lastItem];
+    }
+  }
+
+  ctx.beginPath();
+  let metrics = ctx.measureText(text, ctx.font);
+  let fontHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+  const tx = (textAlign === "center") ? x + width / 2 : x
+  const ty = (textBaseline === "center") ? y + (height - fontHeight * (lineCount + 1)) / 2 : y
+  for(let l = 0; l < lines.length; l++) {
+    ctx.fillText(lines[l].join(" "), tx, ty + (l * fontHeight));
+  }
   ctx.stroke();
 }
 

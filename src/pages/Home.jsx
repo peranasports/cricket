@@ -5,7 +5,8 @@ import ActivitySearch from "../components/activities/ActivitySearch";
 import ActivityResults from "../components/activities/ActivityResults";
 
 function Home() {
-  const navigate = useNavigate()
+  const [theme, setTheme] = useState('business');
+    const navigate = useNavigate()
   const [deliveriesFileName, setDeliveriesFileName] = useState(null);
   const [deliveriesFileData, setDeliveriesFileData] = useState(null);
   const [videoFileName, setVideoFileName] = useState(null);
@@ -48,6 +49,10 @@ function Home() {
     setVideoFileUrl(URL.createObjectURL(files[0]))
     localStorage.setItem("videoFileUrl", URL.createObjectURL(files[0]));
   };
+
+  useEffect(() => {
+    document.querySelector('html').setAttribute('data-theme', theme);
+  }, [theme]);
 
   return (
     // <div>

@@ -12,6 +12,7 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
     "Delivery yaw",
     "Delivery roll",
     "Delivery resultant",
+    "Movement",
   ];
   const parameterunits = ["kph", "metres", "kph", "kph", "", "", "", ""];
 
@@ -72,7 +73,7 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
     bs.averageParameterLabel = "Ave " + parameters[parameter];
     bs.parameterUnit = parameterunits[parameter];
     setBowlerStats(bs);
-  }, []);
+  }, [deliveries]);
 
   if (bowler === null || bowlerStats === null) {
     return <></>;
@@ -80,82 +81,87 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
 
   return (
     <>
-      <div className="ml-6 text-2xl font-bold">{bowler.toUpperCase()}</div>
-      {/* <div className="stats shadow">
-        <div className="stat">
-          <div className="stat-figure text-secondary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block w-8 h-8 stroke-current"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
+      {
+        <div className="stats stats-vertical shadow">
+          <div className="stat">
+            <div className="stat-figure text-secondary">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="inline-block w-8 h-8 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+            <div className="stat-title">DELIVERIES</div>
+            <div className="stat-value">{bowlerStats.numberOfDeliveries}</div>
+            <div className="stat-desc"></div>
           </div>
-          <div className="stat-title">DELIVERIES</div>
-          <div className="stat-value">{bowlerStats.numberOfDeliveries}</div>
-          <div className="stat-desc"></div>
-        </div>
 
-        <div className="stat">
-          <div className="stat-figure text-secondary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block w-8 h-8 stroke-current"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-              ></path>
-            </svg>
+          <div className="stat">
+            <div className="stat-figure text-secondary">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="inline-block w-8 h-8 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                ></path>
+              </svg>
+            </div>
+            <div className="stat-title">
+              {bowlerStats.maxParameterLabel &&
+                bowlerStats.maxParameterLabel.toUpperCase()}
+            </div>
+            <div className="stat-value">
+              {parameter === 8
+                ? bowlerStats.maxParameter &&
+                  bowlerStats.maxParameter.toFixed(2)
+                : bowlerStats.maxParameter &&
+                  bowlerStats.maxParameter.toFixed(2)}
+            </div>
+            <div className="stat-desc">{bowlerStats.parameterUnit}</div>
           </div>
-          <div className="stat-title">
-            {bowlerStats.maxParameterLabel &&
-              bowlerStats.maxParameterLabel.toUpperCase()}
-          </div>
-          <div className="stat-value">
-            {bowlerStats.maxParameter && bowlerStats.maxParameter.toFixed(2)}
-          </div>
-          <div className="stat-desc">{bowlerStats.parameterUnit}</div>
-        </div>
 
-        <div className="stat">
-          <div className="stat-figure text-secondary">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block w-8 h-8 stroke-current"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-              ></path>
-            </svg>
+          <div className="stat">
+            <div className="stat-figure text-secondary">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="inline-block w-8 h-8 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                ></path>
+              </svg>
+            </div>
+            <div className="stat-title">
+              {bowlerStats.averageParameterLabel &&
+                bowlerStats.averageParameterLabel.toUpperCase()}
+            </div>
+            <div className="stat-value">
+              {bowlerStats.averageParameter &&
+                bowlerStats.averageParameter.toFixed(2)}
+            </div>
+            <div className="stat-desc">{bowlerStats.parameterUnit}</div>
           </div>
-          <div className="stat-title">
-            {bowlerStats.averageParameterLabel &&
-              bowlerStats.averageParameterLabel.toUpperCase()}
-          </div>
-          <div className="stat-value">
-            {bowlerStats.averageParameter &&
-              bowlerStats.averageParameter.toFixed(2)}
-          </div>
-          <div className="stat-desc">{bowlerStats.parameterUnit}</div>
         </div>
-      </div> */}
+      }
     </>
   );
 }

@@ -32,7 +32,7 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
       0,
       canvas.width / 2 - 1,
       canvas.width / 2 - 1,
-      "darkgreen",
+      "#588c7e",
       "white",
       1
     );
@@ -72,10 +72,10 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           canvas.width / 4,
           startangle,
           endangle,
-          "green",
-          "green",
+          "#96ceb4",
+          "#96ceb4",
           1,
-          false
+          true
         );
         var angle = (delivery.HitToAngle / 180) * Math.PI - Math.PI / 2;
         var len = ((delivery.HitToLen / 100) * canvas.width) / 4;
@@ -86,8 +86,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           len,
           angle,
           angle,
-          "black",
-          "orange",
+          "#c83349",
+          "#c83349",
           1,
           true
         );
@@ -101,8 +101,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           canvas.width / 4,
           startangle,
           endangle,
-          "green",
-          "green",
+          "#96ceb4",
+          "#96ceb4",
           1,
           false
         );
@@ -115,8 +115,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           len,
           angle,
           angle,
-          "black",
-          "orange",
+          "#c83349",
+          "#c83349",
           1,
           true
         );
@@ -154,8 +154,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           canvas.width / 4,
           startangle,
           endangle,
-          "green",
-          "green",
+          "#96ceb4",
+          "#96ceb4",
           1,
           true
         );
@@ -168,8 +168,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           len,
           angle,
           angle,
-          "black",
-          "orange",
+          "#c83349",
+          "#c83349",
           1,
           true
         );
@@ -183,8 +183,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           canvas.width / 4,
           startangle,
           endangle,
-          "green",
-          "green",
+          "#96ceb4",
+          "#96ceb4",
           1,
           false
         );
@@ -197,8 +197,8 @@ function FieldingMap({ delivery, minLat, maxLat, minLong, maxLong }) {
           len,
           angle,
           angle,
-          "black",
-          "orange",
+          "#c83349",
+          "#c83349",
           1,
           false
         );

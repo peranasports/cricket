@@ -37,6 +37,24 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
     return s;
   }
 
+  const howOutString = (del) => {
+    var s = ""
+    if (del.BatterOut !== "")
+    {
+      s += del.HowOut + " "
+      if (del.HowOut === "RO")
+      {
+        s += del.Fielder1 + ")"
+      }
+      else if (del.Fielder1 !== undefined)
+      {
+        s += del.Fielder1
+      }
+    }
+
+    return s
+  }
+
   if (delivery === null || delivery === undefined) {
     return <></>;
   }
@@ -64,16 +82,16 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
         <div className="card w-full bg-base-100 shadow-xl">
           <div className="flex mx-6 justify-between">
             <h2 className="card-title">
-              Over {delivery.Over - 1}.{delivery.BallInOver}
+              {delivery.Over - 1}.{delivery.BallInOver} - {delivery.Bowler.toUpperCase()}{" "}
+               to  {delivery.Striker.toUpperCase()}
             </h2>
             <button className="btn btn-sm btn-primary" onClick={doSynchVideo}>
               Synch Video
             </button>
           </div>
           <h2 className="ml-6 card-title">
-              {delivery.Bowler}{" "}
-              to {delivery.Striker}
-            </h2>
+              {howOutString(delivery)}
+          </h2>
           <div className="flex justify-between">
             <div className="stats shadow">
               <div className="stat place-items-center">
@@ -97,9 +115,11 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
 <p>Octant {delivery.HitToOctant}</p>
 <p>X {delivery.HitToXPhysical}</p>
 <p>Y {delivery.HitToYPhysical}</p> */}
-{/* <p>PitchX {delivery.PitchX}</p>
-<p>PitchY {delivery.PitchY}</p>
-<p>AtBatterX {delivery.AtBatterX}</p>
+{/* <p>PitchXCoded {delivery.PitchXCoded}</p>
+<p>PitchYCoded {delivery.PitchYCoded}</p>
+<p>XDesc {delivery.PitchXCodedDescription}</p>
+<p>YDesc {delivery.PitchYCodedDescription}</p> */}
+{/* <p>AtBatterX {delivery.AtBatterX}</p>
 <p>AtBatterY {delivery.AtBatterY}</p>
 <p>AtStumpsX {delivery.AtStumpsX}</p>
 <p>AtStumpsY {delivery.AtStumpsY}</p> */}

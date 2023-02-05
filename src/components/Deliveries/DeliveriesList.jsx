@@ -23,6 +23,7 @@ function DeliveriesList({
     "Delivery yaw",
     "Delivery roll",
     "Delivery resultant",
+    "Movement [ Air | Pitch ]",
   ];
 
   const handleClick = (del) => {
@@ -51,34 +52,39 @@ function DeliveriesList({
   }
 
   useEffect(() => {
-    var bs = [];
-    for (var n = 0; n < deliveries.length; n++) {
-      var del = deliveries[n];
-      if (bs.filter((obj) => obj === del.Bowler).length === 0) {
-        bs.push(del.Bowler);
-      }
-    }
-    setBowlers(bs);
-    if (selectedBowler === null)
-    {
-      setSelectedBowler(bs[0])
-      bowlerSelected(bs[0]);
+    setBowlerDeliveries(deliveries);
+    forceUpdate((n) => !n);
+  }, [deliveries]);
 
-      var dd = [];
-      for (var n = 0; n < deliveries.length; n++) {
-        if (deliveries[n].Bowler === bs[0]) {
-          dd.push(deliveries[n]);
-        }
-      }
-      setBowlerDeliveries(dd);
-      }
-  }, [selectedBowler]);
+  // useEffect(() => {
+  //   var bs = [];
+  //   for (var n = 0; n < deliveries.length; n++) {
+  //     var del = deliveries[n];
+  //     if (bs.filter((obj) => obj === del.Bowler).length === 0) {
+  //       bs.push(del.Bowler);
+  //     }
+  //   }
+  //   setBowlers(bs);
+  //   if (selectedBowler === null)
+  //   {
+  //     setSelectedBowler(bs[0])
+  //     bowlerSelected(bs[0]);
+
+  //     var dd = [];
+  //     for (var n = 0; n < deliveries.length; n++) {
+  //       if (deliveries[n].Bowler === bs[0]) {
+  //         dd.push(deliveries[n]);
+  //       }
+  //     }
+  //     setBowlerDeliveries(dd);
+  //     }
+  // }, [selectedBowler]);
 
   return (
     <>
-      <div className="w-full h-full">
-        <div className="mt-2 text-xl font bold">{activityName}</div>
-        <div className="mt-2">
+      <div className="w-full">
+        {/* <div className="mt-2 text-xl font bold">{activityName}</div> */}
+        {/* <div className="mt-2">
           <select
             className="select select-info text-xl w-full"
             value={selectedBowler}
@@ -91,7 +97,7 @@ function DeliveriesList({
               <option key={i}>{bowler}</option>
             ))}
           </select>
-        </div>
+        </div> */}
         <div className="mt-2">
           <select
             className="select select-info text-xl w-full"
@@ -106,13 +112,14 @@ function DeliveriesList({
             ))}
           </select>
         </div>
-        <div>
-          <DeliveriesPanel style={{"width" : "200px"}}
-            selectedDeliveries={bowlerDeliveries}
-            selectedBowler={selectedBowler}
-            parameter={parameter}
-            handleClick={(del) => handleClick(del)}
-          />
+        <div className="overflow-y-auto h-[70vh] ">
+            <DeliveriesPanel
+              style={{ width: "200px" }}
+              selectedDeliveries={bowlerDeliveries}
+              selectedBowler={selectedBowler}
+              parameter={parameter}
+              handleClick={(del) => handleClick(del)}
+            />
         </div>
       </div>
     </>

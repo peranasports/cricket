@@ -16,6 +16,7 @@ import {
 import Spinner from "../components/layout/Spinner";
 import DeliveryDetail from "../components/reports/DeliveryDetail";
 import DeliveriesList from "../components/Deliveries/DeliveriesList";
+import BowlingPanel from "../components/Deliveries/BowlingPanel";
 import BowlerStatsPanel from "../components/Deliveries/BowlerStatsPanel";
 import { useUser } from "../context/UserContext";
 
@@ -33,7 +34,7 @@ function BowlingReport() {
   const [minLong, setMinLong] = useState(0);
   const [maxLat, setMaxLat] = useState(0);
   const [maxLong, setMaxLong] = useState(0);
-  const [activityName, setActivityName] = useState('')
+  const [activityName, setActivityName] = useState("");
   const [bowlingObject, setBowlingObject] = useState(null);
   const [videoOffset, setVideoOffset] = useState(0);
   const [firstTime, setFirstTime] = useState(0);
@@ -313,13 +314,13 @@ function BowlingReport() {
 
   const saveToPC = (fileData) => {
     // const fileData = JSON.stringify(contactsData);
-    const blob = new Blob([fileData], {type: "text/plain"});
+    const blob = new Blob([fileData], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = 'filename.json';
+    const link = document.createElement("a");
+    link.download = "filename.json";
     link.href = url;
     link.click();
-  }
+  };
 
   // useEffect(() => {
   //   setVideoUrl((videoFileUrl === null) !== null ? videoFileUrl : vrl);
@@ -365,88 +366,80 @@ function BowlingReport() {
   // }, [activity.id]);
 
   useEffect(() => {
-      var bo = JSON.parse(deliveriesFileData);
-      setVideoUrl(videoFileUrl !== null ? videoFileUrl : bo.videoUrl);
-      setVideoOffset(bo.videoOffset)
-      localStorage.setItem(
-        "videoOffset",
-        bo.videoOffset
-      );  
-      setBowlingObject(bo);
-        setDeliveries(bo.deliveries);
-        var minx = 0;
-        var miny = 1000;
-        var maxx = -1000;
-        var maxy = -1000;
-        for (var nx = 0; nx < bo.deliveries.length; nx++) {
-          var xdel = bo.deliveries[nx];
-          if (xdel.playersensors === undefined) continue;
-          for (var n = 0; n < xdel.playersensors.length; n++) {
-            var ps = xdel.playersensors[n];
-            if (ps.lat === 0 || ps.long === 0) continue;
-            maxx = ps.lat > maxx ? ps.lat : maxx;
-            maxy = ps.long > maxy ? ps.long : maxy;
-            minx = ps.lat < minx ? ps.lat : minx;
-            miny = ps.long < miny ? ps.long : miny;
-          }
-        }
-        setMinLat(minx);
-        setMinLong(miny);
-        setMaxLat(maxx);
-        setMaxLong(maxy);
-  }, [])
+    var bo = JSON.parse(deliveriesFileData);
+    setVideoUrl(videoFileUrl !== null ? videoFileUrl : bo.videoUrl);
+    setVideoOffset(bo.videoOffset);
+    localStorage.setItem("videoOffset", bo.videoOffset);
+    setBowlingObject(bo);
+    setDeliveries(bo.deliveries);
+    var minx = 0;
+    var miny = 1000;
+    var maxx = -1000;
+    var maxy = -1000;
+    for (var nx = 0; nx < bo.deliveries.length; nx++) {
+      var xdel = bo.deliveries[nx];
+      if (xdel.playersensors === undefined) continue;
+      for (var n = 0; n < xdel.playersensors.length; n++) {
+        var ps = xdel.playersensors[n];
+        if (ps.lat === 0 || ps.long === 0) continue;
+        maxx = ps.lat > maxx ? ps.lat : maxx;
+        maxy = ps.long > maxy ? ps.long : maxy;
+        minx = ps.lat < minx ? ps.lat : minx;
+        miny = ps.long < miny ? ps.long : miny;
+      }
+    }
+    setMinLat(minx);
+    setMinLong(miny);
+    setMaxLat(maxx);
+    setMaxLong(maxy);
+  }, []);
 
   if (!loading) {
     if (deliveries.length === 0) {
       return <></>;
     }
     return (
-      <div>
-        <div className="drawer drawer-mobile">
-          <input id="my-drawer-5" type="checkbox" className="drawer-toggle" />
-          <div className="drawer-content">
-            <div className="mx-2 w-100 h-full">
-              <div className="h-12">
-                <BowlerStatsPanel
-                  deliveries={deliveries}
-                  bowler={selectedBowler}
-                  parameter={selectedParameter}
-                />
-              </div>
-              <div className="flex justify-center">
-                <ReactPlayer
-                  ref={playerRef}
-                  url={videoUrl}
-                  playing={true}
-                  width="100%"
-                  height="100%"
-                  controls={true}
-                  onReady={() => playerReady()}
-                />
-              </div>
-              <DeliveryDetail
-                delivery={selectedDelivery}
-                minLat={minLat}
-                maxLat={maxLat}
-                minLong={minLong}
-                maxLong={maxLong}
-                onSynchVideo={() => onSynchVideo()}
-              />
-            </div>
-          </div>
-          <div className="drawer-side">
-            <label htmlFor="my-drawer-5" className="drawer-overlay"></label>
-            <div className="" style={{"width" : "320px"}}></div>
-            <DeliveriesList
-              activityName={activityName}
-              deliveries={deliveries}
-              deliveryClicked={(dindex) => onDeliveryClicked(dindex)}
-              bowlerSelected={(bowler) => onBowlerSelected(bowler)}
-              parameterSelected={(parameter) => onParameterSelected(parameter)}
-            />
-          </div>
+      <>
+      <div className="flex h-full">
+      <div className="w-80">
+          <BowlingPanel
+            activityName={activityName}
+            deliveries={deliveries}
+            deliveryClicked={(dindex) => onDeliveryClicked(dindex)}
+            bowlerSelected={(bowler) => onBowlerSelected(bowler)}
+            parameterSelected={(parameter) => onParameterSelected(parameter)}
+          />
+        </div>
+        <div className="ml-4 w-full">
+           {/* <div className="h-12">
+             <BowlerStatsPanel
+               deliveries={deliveries}
+               bowler={selectedBowler}
+               parameter={selectedParameter}
+             />
+           </div> */}
+           <div className="flex justify-center">
+             <ReactPlayer
+               ref={playerRef}
+               url={videoUrl}
+               playing={true}
+               width="100%"
+               height="100%"
+               controls={true}
+               onReady={() => playerReady()}
+             />
+           </div>
+           <DeliveryDetail
+             delivery={selectedDelivery}
+             minLat={minLat}
+             maxLat={maxLat}
+             minLong={minLong}
+             maxLong={maxLong}
+             onSynchVideo={() => onSynchVideo()}
+           />
         </div>
       </div>
+      </>
     );
   } else {
     return <Spinner />;
@@ -454,3 +447,52 @@ function BowlingReport() {
 }
 
 export default BowlingReport;
+
+// return (
+//   <div>
+//     <div className="drawer drawer-mobile">
+//       <input id="my-drawer-5" type="checkbox" className="drawer-toggle" />
+//       <div className="drawer-content">
+//         <div className="mx-2 w-100 h-full">
+//           <div className="h-12">
+//             <BowlerStatsPanel
+//               deliveries={deliveries}
+//               bowler={selectedBowler}
+//               parameter={selectedParameter}
+//             />
+//           </div>
+//           <div className="flex justify-center">
+//             <ReactPlayer
+//               ref={playerRef}
+//               url={videoUrl}
+//               playing={true}
+//               width="100%"
+//               height="100%"
+//               controls={true}
+//               onReady={() => playerReady()}
+//             />
+//           </div>
+//           <DeliveryDetail
+//             delivery={selectedDelivery}
+//             minLat={minLat}
+//             maxLat={maxLat}
+//             minLong={minLong}
+//             maxLong={maxLong}
+//             onSynchVideo={() => onSynchVideo()}
+//           />
+//         </div>
+//       </div>
+//       <div className="drawer-side">
+//         <label htmlFor="my-drawer-5" className="drawer-overlay"></label>
+//         <div className="" style={{"width" : "320px"}}></div>
+//         <DeliveriesList
+//           activityName={activityName}
+//           deliveries={deliveries}
+//           deliveryClicked={(dindex) => onDeliveryClicked(dindex)}
+//           bowlerSelected={(bowler) => onBowlerSelected(bowler)}
+//           parameterSelected={(parameter) => onParameterSelected(parameter)}
+//         />
+//       </div>
+//     </div>
+//   </div>
+// );
