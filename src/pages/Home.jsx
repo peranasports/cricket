@@ -55,10 +55,11 @@ function Home() {
   }, [theme]);
 
   return (
-    // <div>
-    //     <ActivitySearch />
-    //     <ActivityResults />
-    // </div>
+    <>
+     <div>
+         <ActivitySearch />
+         <ActivityResults />
+     </div>
     <div className="mx-4 w-100 h-full">
       <div>
         <div className="flex my-2">
@@ -114,6 +115,7 @@ function Home() {
       </div>
 
     </div>
+    </>
   );
 }
 

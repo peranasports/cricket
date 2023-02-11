@@ -69,6 +69,16 @@ function DeliveriesPanel({
       case 7:
         return del.cricket_delivery_au.delivery_resultant;
       case 8:
+        for (var np = 0; np < del.playersensors.length; np++) {
+          if (
+            del.Bowler.includes(del.playersensors[np].athlete.first_name) &&
+            del.Bowler.includes(del.playersensors[np].athlete.last_name)
+          ) {
+            return del.playersensors[np].sl;
+          }
+        }
+        return 0;
+      case 9:
         return { air: del.MovementInAir, pitch: del.MovementOffPitch };
       default:
         return 0;
@@ -208,13 +218,13 @@ function DeliveriesPanel({
       var del = selectedDeliveries[ne];
       var val = getDeliveryValue(del);
       if (val === 0) continue;
-      if (parameter === 8) {
+      if (parameter === 9) {
         writeText(
           {
             ctx: ctx,
             text: val.air,
-            x: x  + 120 - 4,
-            y: y + ((bh - 2) / 2) * scale,
+            x: x + 120 - 4,
+            y: y + ((bh - 2) / 2) * scale - 2,
             width: 40 * scale,
           },
           {
@@ -228,7 +238,7 @@ function DeliveriesPanel({
           {
             ctx: ctx,
             text: val.pitch,
-            x: x  + 120 + 4,
+            x: x + 120 + 4,
             y: y + 2 * scale,
             width: 40 * scale,
           },

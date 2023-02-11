@@ -1,17 +1,31 @@
 const CATAPULT_API_URL = process.env.REACT_APP_CATAPULT_API_URL; //"https://connect-au.catapultsports.com/api/v6/"
+const CATAPULT_API_WRAPPER_URL = process.env.REACT_APP_CATAPULT_API_WRAPPER_URL; //"https://connect-au.catapultsports.com/api/v6/"
 
 export const getActivities = async (token) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + token);
+  // var myHeaders = new Headers();
+  // myHeaders.append("Authorization", "Bearer " + token);
+
+  // var requestOptions = {
+  //   method: "GET",
+  //   headers: myHeaders,
+  //   redirect: "follow",
+  // };
+  // var activitiesData = null;
+  // await fetch(CATAPULT_API_URL + "activities", requestOptions)
 
   var requestOptions = {
     method: "GET",
-    headers: myHeaders,
     redirect: "follow",
   };
 
   var activitiesData = null;
-  await fetch(CATAPULT_API_URL + "activities", requestOptions)
+  const surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetActivities?token=" +
+    token +
+    "&apiurl=" +
+    CATAPULT_API_URL;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       var activities = JSON.parse(result);
@@ -35,28 +49,37 @@ export const getActivities = async (token) => {
 };
 
 export const getAthletesInActivity = async (token, activityId) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + token);
-
   var requestOptions = {
     method: "GET",
-    headers: myHeaders,
     redirect: "follow",
   };
 
   var athletesData = null;
   var activity = null;
-  await fetch(CATAPULT_API_URL + "activities/" + activityId, requestOptions)
+  var surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetActivityDetails?token=" +
+    token +
+    "&apiurl=" +
+    CATAPULT_API_URL +
+    "&activityid=" +
+    activityId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       activity = JSON.parse(result);
     })
     .catch((error) => console.log("error", error));
 
-  await fetch(
-    CATAPULT_API_URL + "activities/" + activityId + "/athletes",
-    requestOptions
-  )
+  var surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetAthletesInActivity?token=" +
+    token +
+    "&apiurl=" +
+    CATAPULT_API_URL +
+    "&activityid=" +
+    activityId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       var athletes = JSON.parse(result);
@@ -72,12 +95,8 @@ export const getSensorDataForAthletesInActivity = async (
   activityId,
   athleteId
 ) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + token);
-
   var requestOptions = {
     method: "GET",
-    headers: myHeaders,
     redirect: "follow",
   };
 
@@ -85,29 +104,47 @@ export const getSensorDataForAthletesInActivity = async (
   var activity = null;
   var athlete = null;
 
-  await fetch(CATAPULT_API_URL + "activities/" + activityId, requestOptions)
+  var surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetActivityDetails?token=" +
+    token +
+    "&apiurl=" +
+    CATAPULT_API_URL +
+    "&activityid=" +
+    activityId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       activity = JSON.parse(result);
     })
     .catch((error) => console.log("error", error));
 
-  await fetch(CATAPULT_API_URL + "athletes/" + athleteId, requestOptions)
+  surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetAthleteDetails?token=" +
+    token +
+    "&apiurl=" +
+    CATAPULT_API_URL +
+    "&athleteid=" +
+    athleteId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       athlete = JSON.parse(result);
     })
     .catch((error) => console.log("error", error));
 
-  await fetch(
+  surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetSensorDataForAthletesInActivity?token=" +
+    token +
+    "&apiurl=" +
     CATAPULT_API_URL +
-      "activities/" +
-      activityId +
-      "/athletes/" +
-      athleteId +
-      "/sensor",
-    requestOptions
-  )
+    "&activityid=" +
+    activityId +
+    "&athleteid=" +
+    athleteId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       var sensordata = JSON.parse(result);
@@ -127,25 +164,24 @@ export const getDeliveriesForAthletesInActivity = async (
   activityId,
   athleteId
 ) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + token);
-
   var requestOptions = {
     method: "GET",
-    headers: myHeaders,
     redirect: "follow",
   };
 
   var deliveries = null;
-  await fetch(
+
+  var surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetDeliveriesForAthletesInActivity?token=" +
+    token +
+    "&apiurl=" +
     CATAPULT_API_URL +
-      "activities/" +
-      activityId +
-      "/athletes/" +
-      athleteId +
-      "/events?event_types=cricket_delivery_au",
-    requestOptions
-  )
+    "&activityid=" +
+    activityId +
+    "&athleteid=" +
+    athleteId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       deliveries = JSON.parse(result);
@@ -160,41 +196,41 @@ export const getDeliveriesAndSensorDataForAthletesInActivity = async (
   activityId,
   athleteId
 ) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", "Bearer " + token);
-
   var requestOptions = {
     method: "GET",
-    headers: myHeaders,
     redirect: "follow",
   };
 
   var deliveries = null;
   var sensordata = null;
-  await fetch(
+  var surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetDeliveriesForAthletesInActivity?token=" +
+    token +
+    "&apiurl=" +
     CATAPULT_API_URL +
-      "activities/" +
-      activityId +
-      "/athletes/" +
-      athleteId +
-      "/events?event_types=cricket_delivery_au",
-    requestOptions
-  )
+    "&activityid=" +
+    activityId +
+    "&athleteid=" +
+    athleteId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       deliveries = JSON.parse(result);
     })
     .catch((error) => console.log("error", error));
 
-  await fetch(
+  surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetSensorDataForAthletesInActivity?token=" +
+    token +
+    "&apiurl=" +
     CATAPULT_API_URL +
-      "activities/" +
-      activityId +
-      "/athletes/" +
-      athleteId +
-      "/sensor",
-    requestOptions
-  )
+    "&activityid=" +
+    activityId +
+    "&athleteid=" +
+    athleteId;
+  await fetch(surl, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       sensordata = JSON.parse(result);

@@ -12,6 +12,7 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
     "Delivery yaw",
     "Delivery roll",
     "Delivery resultant",
+    "Player Load",
     "Movement",
   ];
   const parameterunits = ["kph", "metres", "kph", "kph", "", "", "", ""];
@@ -125,7 +126,7 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
                 bowlerStats.maxParameterLabel.toUpperCase()}
             </div>
             <div className="stat-value">
-              {parameter === 8
+              {parameter === parameters.length - 1
                 ? bowlerStats.maxParameter &&
                   bowlerStats.maxParameter.toFixed(2)
                 : bowlerStats.maxParameter &&

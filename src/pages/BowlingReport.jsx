@@ -156,6 +156,10 @@ function BowlingReport() {
       const dels = dd.deliveriesData[0].data.cricket_delivery_au;
       const sensordata = dd.sensordata[0].data;
       sensordata.athlete = athlete;
+      for (var nd=0; dels && nd<dels.length; nd++)
+      {
+        dels[nd].athleteId = athlete.id
+      }
       alldels.push(dels !== null ? dels : []);
       allsensors.push(sensordata !== null ? sensordata : []);
       console.log(athlete.last_name);
@@ -208,8 +212,24 @@ function BowlingReport() {
         const sensordata = allsensors[ns];
         var lastsdd = 0;
         for (var nx = sindex; nx < sensordata.length; nx++) {
-          const sdd = sensordata[nx];
+          var sdd = sensordata[nx];
           if (sdd.ts > deltime && deltime > lastsdd) {
+            var maxsl = {val: 0, index:0}
+            if (sensordata.athlete.id === del.cricket_delivery_au.athleteId)
+            {
+              var snx = nx - 20 < 0 ? 0 : nx - 20
+              var lnx = nx + 20 >= sensordata.length ? sensordata.length - 1 : nx + 20
+              for (var nxx=snx; nxx<lnx; nxx++)
+              {
+                if (sensordata[nxx].sl > maxsl.val)
+                {
+                  maxsl = { val: sensordata[nxx].sl, index: nxx }
+                }
+              }
+              console.log(maxsl)
+              sdd = sensordata[maxsl.index]
+            }
+
             var ts = deltime;
             var t = new Date(1970, 0, 1); // Epoch
             t.setSeconds(ts);
@@ -322,77 +342,81 @@ function BowlingReport() {
     link.click();
   };
 
-  // useEffect(() => {
-  //   setVideoUrl((videoFileUrl === null) !== null ? videoFileUrl : vrl);
-  //   var bobj = bowlingObject;
-  //   if (bobj === null) {
-  //     bobj = localStorage.getItem("BowlingObject");
-  //   }
-  //   if (bobj !== null) {
-  //     var bo = JSON.parse(bobj);
-  //     setBowlingObject(bo);
-  //     if (bo.activityId === activity.id) {
-  //       setDeliveries(bo.deliveries);
-  //       var minx = 0;
-  //       var miny = 1000;
-  //       var maxx = -1000;
-  //       var maxy = -1000;
-  //       for (var nx = 0; nx < bo.deliveries.length; nx++) {
-  //         var xdel = bo.deliveries[nx];
-  //         if (xdel.playersensors === undefined) continue;
-  //         for (var n = 0; n < xdel.playersensors.length; n++) {
-  //           var ps = xdel.playersensors[n];
-  //           if (ps.lat === 0 || ps.long === 0) continue;
-  //           maxx = ps.lat > maxx ? ps.lat : maxx;
-  //           maxy = ps.long > maxy ? ps.long : maxy;
-  //           minx = ps.lat < minx ? ps.lat : minx;
-  //           miny = ps.long < miny ? ps.long : miny;
-  //         }
-  //       }
-  //       setMinLat(minx);
-  //       setMinLong(miny);
-  //       setMaxLat(maxx);
-  //       setMaxLong(maxy);
-  //     }
-  //     else
-  //     {
-  //       setDeliveries([]);
-  //       getAthletesDeliveries();
-  //     }
-  //   } else {
-  //     setDeliveries([]);
-  //     getAthletesDeliveries();
-  //   }
-  // }, [activity.id]);
-
+  // with Catapult token
   useEffect(() => {
-    var bo = JSON.parse(deliveriesFileData);
-    setVideoUrl(videoFileUrl !== null ? videoFileUrl : bo.videoUrl);
-    setVideoOffset(bo.videoOffset);
-    localStorage.setItem("videoOffset", bo.videoOffset);
-    setBowlingObject(bo);
-    setDeliveries(bo.deliveries);
-    var minx = 0;
-    var miny = 1000;
-    var maxx = -1000;
-    var maxy = -1000;
-    for (var nx = 0; nx < bo.deliveries.length; nx++) {
-      var xdel = bo.deliveries[nx];
-      if (xdel.playersensors === undefined) continue;
-      for (var n = 0; n < xdel.playersensors.length; n++) {
-        var ps = xdel.playersensors[n];
-        if (ps.lat === 0 || ps.long === 0) continue;
-        maxx = ps.lat > maxx ? ps.lat : maxx;
-        maxy = ps.long > maxy ? ps.long : maxy;
-        minx = ps.lat < minx ? ps.lat : minx;
-        miny = ps.long < miny ? ps.long : miny;
-      }
+    setVideoUrl((videoFileUrl === null) !== null ? videoFileUrl : vrl);
+    var bobj = bowlingObject;
+    if (bobj === null) {
+      bobj = localStorage.getItem("BowlingObject");
     }
-    setMinLat(minx);
-    setMinLong(miny);
-    setMaxLat(maxx);
-    setMaxLong(maxy);
-  }, []);
+    // if (bobj !== null) {
+    //   var bo = JSON.parse(bobj);
+    //   setBowlingObject(bo);
+    //   if (bo.activityId === activity.id) {
+    //     setDeliveries(bo.deliveries);
+    //     var minx = 0;
+    //     var miny = 1000;
+    //     var maxx = -1000;
+    //     var maxy = -1000;
+    //     for (var nx = 0; nx < bo.deliveries.length; nx++) {
+    //       var xdel = bo.deliveries[nx];
+    //       if (xdel.playersensors === undefined) continue;
+    //       for (var n = 0; n < xdel.playersensors.length; n++) {
+    //         var ps = xdel.playersensors[n];
+    //         if (ps.lat === 0 || ps.long === 0) continue;
+    //         maxx = ps.lat > maxx ? ps.lat : maxx;
+    //         maxy = ps.long > maxy ? ps.long : maxy;
+    //         minx = ps.lat < minx ? ps.lat : minx;
+    //         miny = ps.long < miny ? ps.long : miny;
+    //       }
+    //     }
+    //     setMinLat(minx);
+    //     setMinLong(miny);
+    //     setMaxLat(maxx);
+    //     setMaxLong(maxy);
+    //   }
+    //   else
+    //   {
+    //     setDeliveries([]);
+    //     getAthletesDeliveries();
+    //   }
+    // } 
+    // else 
+    {
+      setDeliveries([]);
+      getAthletesDeliveries();
+    }
+  }, [activity.id]);
+
+  // Load saved JSON
+  // useEffect(() => {
+  //   var bo = JSON.parse(deliveriesFileData);
+  //   setVideoUrl(videoFileUrl !== null ? videoFileUrl : bo.videoUrl);
+  //   setVideoOffset(bo.videoOffset);
+  //   localStorage.setItem("videoOffset", bo.videoOffset);
+  //   setBowlingObject(bo);
+  //   setDeliveries(bo.deliveries);
+  //   var minx = 0;
+  //   var miny = 1000;
+  //   var maxx = -1000;
+  //   var maxy = -1000;
+  //   for (var nx = 0; nx < bo.deliveries.length; nx++) {
+  //     var xdel = bo.deliveries[nx];
+  //     if (xdel.playersensors === undefined) continue;
+  //     for (var n = 0; n < xdel.playersensors.length; n++) {
+  //       var ps = xdel.playersensors[n];
+  //       if (ps.lat === 0 || ps.long === 0) continue;
+  //       maxx = ps.lat > maxx ? ps.lat : maxx;
+  //       maxy = ps.long > maxy ? ps.long : maxy;
+  //       minx = ps.lat < minx ? ps.lat : minx;
+  //       miny = ps.long < miny ? ps.long : miny;
+  //     }
+  //   }
+  //   setMinLat(minx);
+  //   setMinLong(miny);
+  //   setMaxLat(maxx);
+  //   setMaxLong(maxy);
+  // }, []);
 
   if (!loading) {
     if (deliveries.length === 0) {

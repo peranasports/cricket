@@ -23,6 +23,7 @@ function DeliveriesList({
     "Delivery yaw",
     "Delivery roll",
     "Delivery resultant",
+    "Player Load", 
     "Movement [ Air | Pitch ]",
   ];
 
