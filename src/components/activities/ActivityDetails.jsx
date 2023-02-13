@@ -6,11 +6,12 @@ import AthletesList from "./AthletesList";
 import { secsToDateTime } from "../../utils/utils";
 import { useUser } from "../../context/UserContext";
 import { toast } from "react-toastify";
+import Spinner from "../layout/Spinner";
 
 function ActivityDetails() {
   const [aths, setAths] = useState(null);
   const params = useParams();
-  const { activity, athletes, token, dispatch } =
+  const { activity, athletes, loading, dispatch } =
     useContext(CatapultAPIContext);
   const navigate = useNavigate();
   const { catapultToken } = useUser();
@@ -18,18 +19,23 @@ function ActivityDetails() {
   const [videoFileUrl, setVideoFileUrl] = useState(null);
   const [deliveriesFileName, setDeliveriesFileName] = useState(null);
   const [videoFileName, setVideoFileName] = useState(null);
-  const dfRef = useRef()
-  const vfRef = useRef()
+  const [onlineVideoFileUrl, setOnlineVideoFileUrl] = useState(null);
+  const dfRef = useRef();
+  const vfRef = useRef();
+
+  const handleChange = (e) => setOnlineVideoFileUrl(e.target.value);
 
   const getLatest = useCallback(async () => {
-    dispatch({ type: "SET_LOADING" });
+    dispatch({ type: "SET_LOADING", payload: {message: "Loading athletes in activity..."} });
 
     const athletesData = await getAthletesInActivity(
       catapultToken,
       params.activityId
     );
     dispatch({ type: "GET_ATHLETES_IN_ACTIVITY", payload: athletesData });
-    setAths(athletesData.athletes);
+    if (athletesData.athletes !== undefined) {
+      setAths(athletesData.athletes);
+    }
   }, [params.activityId]);
 
   const doSensorData = () => {
@@ -53,43 +59,56 @@ function ActivityDetails() {
       activity: activity,
       deliveriesFileData: deliveriesFileData,
       videoFileUrl: videoFileUrl,
+      onlineVideoFileUrl: onlineVideoFileUrl,
     };
     navigate("/bowlingreport", { state: st });
   };
 
   const handleFileSelected = (e) => {
     const files = Array.from(e.target.files);
-    console.log("file:", files[0])
-    setDeliveriesFileName(files[0].name)
-    localStorage.setItem("deliveriesFileName", files[0].name)
-    const fileReader = new FileReader()
-    fileReader.readAsText(files[0], "UTF-8")
+    console.log("file:", files[0]);
+    setDeliveriesFileName(files[0].name);
+    localStorage.setItem("deliveriesFileName", files[0].name);
+    const fileReader = new FileReader();
+    fileReader.readAsText(files[0], "UTF-8");
     fileReader.onload = (e) => {
       setDeliveriesFileData(e.target.result);
-      localStorage.setItem("deliveriesFileData", e.target.result)
-    }
-  }
+      localStorage.setItem("deliveriesFileData", e.target.result);
+    };
+  };
 
   const handleVideoSelected = (e) => {
     const files = Array.from(e.target.files);
     console.log("file:", files[0]);
     setVideoFileName(files[0].name);
     localStorage.setItem("videoFileName", files[0].name);
-    setVideoFileUrl(URL.createObjectURL(files[0]))
+    setVideoFileUrl(URL.createObjectURL(files[0]));
     localStorage.setItem("videoFileUrl", URL.createObjectURL(files[0]));
   };
 
+  const doClearVideoFile = () => {
+    setVideoFileName(null)
+    setVideoFileUrl(null)
+    localStorage.setItem("videoFileName", "");
+    localStorage.setItem("videoFileUrl", "");
+  };
+
   useEffect(() => {
-    setDeliveriesFileName(localStorage.getItem("deliveriesFileName"))
-    setDeliveriesFileData(localStorage.getItem("deliveriesFileData"))
-    setVideoFileName(localStorage.getItem("videoFileName"))
-    setVideoFileUrl(localStorage.getItem("videoFileUrl"))
+    setDeliveriesFileName(localStorage.getItem("deliveriesFileName"));
+    setDeliveriesFileData(localStorage.getItem("deliveriesFileData"));
+    setVideoFileName(localStorage.getItem("videoFileName"));
+    setVideoFileUrl(localStorage.getItem("videoFileUrl"));
     getLatest();
     // setTimeout(() => setCounter(!counter), 30000)
   }, [getLatest]);
 
   if (activity.id === undefined) {
     return <></>;
+  }
+
+  if (loading)
+  {
+    return <Spinner />;
   }
 
   return (
@@ -112,8 +131,10 @@ function ActivityDetails() {
                 Bowling Report
               </button>
             </div>
-            
-            <h2 className="mt-4 text-2xl font-bold">{activity.name.toUpperCase()}</h2>
+
+            <h2 className="mt-4 text-2xl font-bold">
+              {activity.name.toUpperCase()}
+            </h2>
             <p>{secsToDateTime(activity.start_time).toDateString()}</p>
             <div>
               {/* <label className="label">
@@ -138,10 +159,14 @@ function ActivityDetails() {
                   type="button"
                   className="btn btn-sm w-60"
                   value="Select deliveries file..."
-                  onClick={() => document.getElementById("selectedFile").click()}
+                  onClick={() =>
+                    document.getElementById("selectedFile").click()
+                  }
                 />
                 <label className="label ml-4">
-                  <span className="label-text">{deliveriesFileName === null ? "" : deliveriesFileName}</span>
+                  <span className="label-text">
+                    {deliveriesFileName === null ? "" : deliveriesFileName}
+                  </span>
                 </label>
               </div>
             </div>
@@ -155,7 +180,7 @@ function ActivityDetails() {
                 onChange={handleVideoSelected}
                 className="file-input file-input-bordered w-full max-w-xs"
               /> */}
-                            <div className="flex">
+              <div className="flex">
                 <input
                   type="file"
                   id="selectedVideo"
@@ -167,13 +192,35 @@ function ActivityDetails() {
                   type="button"
                   className="btn btn-sm w-60"
                   value="Select video file..."
-                  onClick={() => document.getElementById("selectedVideo").click()}
+                  onClick={() =>
+                    document.getElementById("selectedVideo").click()
+                  }
                 />
                 <label className="label ml-4">
-                  <span className="label-text">{videoFileName === null ? "" : videoFileName}</span>
+                  <span className="label-text">
+                    {videoFileName === null ? "" : videoFileName}
+                  </span>
                 </label>
+                {videoFileName !== null ? (
+                  <button
+                    className="btn btn-sm btn-ghost"
+                    onClick={() => doClearVideoFile()}
+                  >
+                    Clear
+                  </button>
+                ) : (
+                  <></>
+                )}
               </div>
-
+            </div>
+            <div className="my-4">
+              <p className="text-sm">Online Video URL</p>
+              <input
+                type="text"
+                className="w-full pr-40 bg-gray-200 input input-sm rounded-sm"
+                id="onlineVideoUrl"
+                onChange={handleChange}
+              />
             </div>
           </div>
         </div>

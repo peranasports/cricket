@@ -33,10 +33,10 @@ function AthletesList({ athletes, onAthleteSelectionChanged }) {
     }
     return (
         <>
-            <div className="flex space-x-4 mt-2">
+            {/* <div className="flex space-x-4 mt-2">
                 <button className="flex btn btn-sm" onClick={() => selectAll()}>Select All</button>
                 <button className="flex btn btn-sm" onClick={() => selectNone()}>Select None</button>
-            </div>
+            </div> */}
 
             <div className="overflow-y-auto h-[80vh]">
                 <div className='pt-2 rounded-lg shadow-lg card-compact bg-base-100'>

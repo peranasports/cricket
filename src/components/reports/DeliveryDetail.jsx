@@ -2,9 +2,13 @@ import React from "react";
 import FieldingPosition from "../Deliveries/FieldingPosition";
 import FieldingMap from "../Deliveries/FieldingMap";
 
-function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVideo }) {
+function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVideo, onSaveData }) {
   const doSynchVideo = () => {
     onSynchVideo();
+  };
+
+  const doSaveData = () => {
+    onSaveData();
   };
 
   function getRuns(del) {
@@ -85,6 +89,9 @@ function DeliveryDetail({ delivery, minLat, maxLat, minLong, maxLong, onSynchVid
               {delivery.Over - 1}.{delivery.BallInOver} - {delivery.Bowler.toUpperCase()}{" "}
                to  {delivery.Striker.toUpperCase()}
             </h2>
+            <button className="btn btn-sm btn-primary" onClick={doSaveData}>
+              Save Data
+            </button>
             <button className="btn btn-sm btn-primary" onClick={doSynchVideo}>
               Synch Video
             </button>

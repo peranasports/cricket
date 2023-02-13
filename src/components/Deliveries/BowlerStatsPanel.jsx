@@ -45,6 +45,13 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
     }
   };
 
+  const getPlayerPhoto = (name) => {
+    const names = name.split(", ");
+    if (names.length === 2) {
+      const fn = names[1] + "-" + names[0] + ".png";
+    }
+  };
+
   useEffect(() => {
     if (bowler === null) {
       return;
@@ -82,7 +89,7 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
 
   return (
     <>
-      {
+      <div className="bg-blue-800 w-full">
         <div className="stats stats-vertical shadow">
           <div className="stat">
             <div className="stat-figure text-secondary">
@@ -162,7 +169,7 @@ function BowlerStatsPanel({ deliveries, bowler, parameter }) {
             <div className="stat-desc">{bowlerStats.parameterUnit}</div>
           </div>
         </div>
-      }
+      </div>
     </>
   );
 }

@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import BowlingReport from "./pages/BowlingReport";
 import ActivityDetails from "./components/activities/ActivityDetails";
 import DeliveriesReport from "./components/reports/DeliveriesReport";
+import LoadSavedData from "./pages/LoadSavedData";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <main className="container mx-auto px-3 pb-12">
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/loadsaveddata" element={<LoadSavedData />} />
                   <Route
                     path="/activities/:activityId"
                     element={<ActivityDetails />}

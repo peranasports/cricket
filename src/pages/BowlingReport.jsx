@@ -23,10 +23,10 @@ import { useUser } from "../context/UserContext";
 function BowlingReport() {
   const location = useLocation();
   const [isReady, setIsReady] = useState(false);
-  const { athletes, activity, deliveriesFileData, videoFileUrl } =
+  const { athletes, activity, deliveriesFileData, videoFileUrl, onlineVideoFileUrl } =
     location.state;
-  const vrl =
-    "https://tennis.roosolution.com/videos/processed/Jason%20Dunstall/G13_v_Stars_001_SDI_1_1080p50.mp4";
+  // const vrl =
+  //   "https://tennis.roosolution.com/videos/processed/Jason%20Dunstall/G13_v_Stars_001_SDI_1_1080p50.mp4";
   const playerRef = useRef();
   const [videoUrl, setVideoUrl] = useState(null);
   const [deliveries, setDeliveries] = useState([]);
@@ -141,9 +141,9 @@ function BowlingReport() {
     var alldels = [];
     var allsensors = [];
     for (var np = 0; np < athletes.length; np++) {
-      dispatch({ type: "SET_LOADING" });
       var athlete = athletes[np];
       var athid = athlete.id;
+      dispatch({ type: "SET_LOADING", payload: {message: "Loading data for " + athlete.last_name + "..."}  });
       const dd = await getDeliveriesAndSensorDataForAthletesInActivity(
         catapultToken,
         activity.id,
@@ -226,7 +226,7 @@ function BowlingReport() {
                   maxsl = { val: sensordata[nxx].sl, index: nxx }
                 }
               }
-              console.log(maxsl)
+              // console.log(maxsl)
               sdd = sensordata[maxsl.index]
             }
 
@@ -270,8 +270,9 @@ function BowlingReport() {
     setMaxLat(maxx);
     setMaxLong(maxy);
 
-    var bobj = { activityId: activity.id, deliveries: xdels };
+    var bobj = { activityId: activity.id, activityName: activity.name, videoUrl: videoFileUrl, deliveries: xdels };
     localStorage.setItem("BowlingObject", JSON.stringify(bobj));
+    setBowlingObject(bobj)
   }, [activity.id]);
 
   const playerReady = () => {
@@ -325,11 +326,17 @@ function BowlingReport() {
   const onSynchVideo = () => {
     let firstdel = deliveries[0];
     setFirstTime(timeStringToSeconds(firstdel.TimeofDayFull));
-    setVideoOffset(playerRef.current.getCurrentTime());
-    localStorage.setItem(
-      "videoOffset",
-      playerRef.current.getCurrentTime().toString()
-    );
+    const voffset = playerRef.current.getCurrentTime()
+    setVideoOffset(voffset);
+    localStorage.setItem("videoOffset", voffset.toString());
+    bowlingObject.videoOffset = voffset
+  };
+
+  const onSaveData = () => {
+    if (bowlingObject !== undefined)
+    {
+      saveToPC(JSON.stringify(bowlingObject))
+    }
   };
 
   const saveToPC = (fileData) => {
@@ -337,86 +344,86 @@ function BowlingReport() {
     const blob = new Blob([fileData], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.download = "filename.json";
+    link.download = bowlingObject.activityName + ".json";
     link.href = url;
     link.click();
   };
 
-  // with Catapult token
   useEffect(() => {
-    setVideoUrl((videoFileUrl === null) !== null ? videoFileUrl : vrl);
-    var bobj = bowlingObject;
-    if (bobj === null) {
-      bobj = localStorage.getItem("BowlingObject");
-    }
-    // if (bobj !== null) {
-    //   var bo = JSON.parse(bobj);
-    //   setBowlingObject(bo);
-    //   if (bo.activityId === activity.id) {
-    //     setDeliveries(bo.deliveries);
-    //     var minx = 0;
-    //     var miny = 1000;
-    //     var maxx = -1000;
-    //     var maxy = -1000;
-    //     for (var nx = 0; nx < bo.deliveries.length; nx++) {
-    //       var xdel = bo.deliveries[nx];
-    //       if (xdel.playersensors === undefined) continue;
-    //       for (var n = 0; n < xdel.playersensors.length; n++) {
-    //         var ps = xdel.playersensors[n];
-    //         if (ps.lat === 0 || ps.long === 0) continue;
-    //         maxx = ps.lat > maxx ? ps.lat : maxx;
-    //         maxy = ps.long > maxy ? ps.long : maxy;
-    //         minx = ps.lat < minx ? ps.lat : minx;
-    //         miny = ps.long < miny ? ps.long : miny;
-    //       }
-    //     }
-    //     setMinLat(minx);
-    //     setMinLong(miny);
-    //     setMaxLat(maxx);
-    //     setMaxLong(maxy);
-    //   }
-    //   else
-    //   {
-    //     setDeliveries([]);
-    //     getAthletesDeliveries();
-    //   }
-    // } 
-    // else 
+    const vu = (videoFileUrl === null || videoFileUrl === "") ? onlineVideoFileUrl : videoFileUrl
+    setVideoUrl(vu);
+
+    if (activity.id === undefined)
     {
-      setDeliveries([]);
-      getAthletesDeliveries();
+      loadSavedData(vu)
+    }
+    else
+    {
+      var bobj = bowlingObject;
+      if (bobj === null) {
+        bobj = localStorage.getItem("BowlingObject");
+      }
+      if (bobj !== null) {
+        var bo = JSON.parse(bobj);
+        setBowlingObject(bo);
+        if (bo.activityId === activity.id) {
+          loadBowlingObject(bo)
+          if (vu !== null)
+          {
+            bo.videoUrl = vu
+          }
+        }
+        else
+        {
+          setDeliveries([]);
+          getAthletesDeliveries();
+        }  
+      }
+      else
+      {
+        setDeliveries([]);
+        getAthletesDeliveries();
+      }
     }
   }, [activity.id]);
 
-  // Load saved JSON
-  // useEffect(() => {
-  //   var bo = JSON.parse(deliveriesFileData);
-  //   setVideoUrl(videoFileUrl !== null ? videoFileUrl : bo.videoUrl);
-  //   setVideoOffset(bo.videoOffset);
-  //   localStorage.setItem("videoOffset", bo.videoOffset);
-  //   setBowlingObject(bo);
-  //   setDeliveries(bo.deliveries);
-  //   var minx = 0;
-  //   var miny = 1000;
-  //   var maxx = -1000;
-  //   var maxy = -1000;
-  //   for (var nx = 0; nx < bo.deliveries.length; nx++) {
-  //     var xdel = bo.deliveries[nx];
-  //     if (xdel.playersensors === undefined) continue;
-  //     for (var n = 0; n < xdel.playersensors.length; n++) {
-  //       var ps = xdel.playersensors[n];
-  //       if (ps.lat === 0 || ps.long === 0) continue;
-  //       maxx = ps.lat > maxx ? ps.lat : maxx;
-  //       maxy = ps.long > maxy ? ps.long : maxy;
-  //       minx = ps.lat < minx ? ps.lat : minx;
-  //       miny = ps.long < miny ? ps.long : miny;
-  //     }
-  //   }
-  //   setMinLat(minx);
-  //   setMinLong(miny);
-  //   setMaxLat(maxx);
-  //   setMaxLong(maxy);
-  // }, []);
+  const loadBowlingObject = (bo) =>
+  {
+    setDeliveries(bo.deliveries);
+    var minx = 0;
+    var miny = 1000;
+    var maxx = -1000;
+    var maxy = -1000;
+    for (var nx = 0; nx < bo.deliveries.length; nx++) {
+      var xdel = bo.deliveries[nx];
+      if (xdel.playersensors === undefined) continue;
+      for (var n = 0; n < xdel.playersensors.length; n++) {
+        var ps = xdel.playersensors[n];
+        if (ps.lat === 0 || ps.long === 0) continue;
+        maxx = ps.lat > maxx ? ps.lat : maxx;
+        maxy = ps.long > maxy ? ps.long : maxy;
+        minx = ps.lat < minx ? ps.lat : minx;
+        miny = ps.long < miny ? ps.long : miny;
+      }
+    }
+    setMinLat(minx);
+    setMinLong(miny);
+    setMaxLat(maxx);
+    setMaxLong(maxy);
+  }
+
+  const loadSavedData = (vu) => {
+    var bo = JSON.parse(deliveriesFileData);
+    if (vu != null)
+    {
+      bo.videoUrl = vu      
+    }
+    setVideoUrl(bo.videoUrl);
+    setVideoOffset(bo.videoOffset);
+    localStorage.setItem("videoOffset", bo.videoOffset);
+    setBowlingObject(bo);
+    loadBowlingObject(bo)
+  }
 
   if (!loading) {
     if (deliveries.length === 0) {
@@ -460,6 +467,7 @@ function BowlingReport() {
              minLong={minLong}
              maxLong={maxLong}
              onSynchVideo={() => onSynchVideo()}
+             onSaveData={() => onSaveData()}
            />
         </div>
       </div>

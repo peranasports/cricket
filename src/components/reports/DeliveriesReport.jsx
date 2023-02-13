@@ -104,7 +104,7 @@ function DeliveriesReport() {
       if (athindex === undefined) {
         return;
       }
-      dispatch({ type: "SET_LOADING" });
+      dispatch({ type: "SET_LOADING", payload: {message: "Loading deliveries..."} });
       var athlete = athletes[athindex];
 
       var xdels = [];

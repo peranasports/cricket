@@ -19,7 +19,7 @@ function ActivitySearch() {
     if (text === '') {
       setAlert('Please enter token', 'error')
     } else {
-      dispatch({ type: 'SET_LOADING' })
+      dispatch({ type: 'SET_LOADING', payload: {message: "Loading activities..."} })
       setCookie('token', text, { path: '/' })
       const activitiesData = await getActivities(text)
       dispatch({ type: 'GET_ACTIVITIES', payload: activitiesData })
@@ -39,36 +39,38 @@ function ActivitySearch() {
   // }
 
   return (
-    <div className='grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-2 md:grid-cols-2 mb-8 gap-8'>
+    <div className=''>
       <div>
         <form onSubmit={handleSubmit}>
           <div className='form-control pt-6'>
-            <div className='relative'>
+            <p>Catapult Token</p>
+            <div className='flex'>
               <input
                 type='text'
-                className='w-full pr-40 bg-gray-200 input input-lg text-black'
-                placeholder='Enter Token'
+                className='w-full pr-40 bg-gray-200 input input-md rounded-xs text-black border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500'
+                placeholder='Catapult Token'
                 value={text}
                 onChange={handleChange}
               />
               <button
                 type='submit'
-                className='absolute top-0 right-0 rounded-l-none w-36 btn btn-lg'>
-                Go
+                className='w-40 ml-2 btn btn-md btn-primary'>
+                {/* className='absolute top-0 right-0 rounded-l-none w-40 btn btn-md btn-primary'> */}
+                Load Catapult Activities
               </button>
             </div>
           </div>
         </form>
       </div>
-      {activities && (
-        <div className='pt-6'>
+      {/* {activities && (
+        <div className='pt-6 mt-6'>
           <button
             onClick={() => dispatch({ type: 'CLEAR_ACTIVITIES' })}
-            className='btn btn-ghost btn-lg'>
-            Clear
+            className='btn btn-primary btn-md'>
+            Load Saved Data
           </button>
         </div>
-      )}
+      )} */}
     </div>
   )
 }
