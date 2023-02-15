@@ -1,9 +1,17 @@
 import { useEffect, useContext, useCallback, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CatapultAPIContext from "../../context/CatapultAPI/CatapultAPIContext";
-import { getAthletesInActivity, getStatsInActivity, getParameters } from "../../context/CatapultAPI/CatapultAPIAction";
+import {
+  getAthletesInActivity,
+  getStatsInActivity,
+  getParameters,
+} from "../../context/CatapultAPI/CatapultAPIAction";
 import AthletesList from "./AthletesList";
-import { secsToDateTime } from "../../utils/utils";
+import {
+  secsToDateTime,
+  getHomeTeamLogo,
+  getAwayTeamLogo,
+} from "../../utils/utils";
 import { useUser } from "../../context/UserContext";
 import { toast } from "react-toastify";
 import Spinner from "../layout/Spinner";
@@ -49,32 +57,29 @@ function ActivityDetails() {
       type: "SET_LOADING",
       payload: { message: "Loading parameters..." },
     });
-    
+
     const paramsData = await getParameters(catapultToken);
     dispatch({ type: "GET_PARAMETERS", payload: paramsData });
-    setAllParameters(paramsData.parameters)
+    setAllParameters(paramsData.parameters);
 
     dispatch({
       type: "SET_LOADING",
       payload: { message: "Loading stats..." },
     });
-    
+
     const statsData = await getStatsInActivity(
       catapultToken,
       params.activityId
     );
     dispatch({ type: "GET_STATS_IN_ACTIVITY", payload: statsData });
-    setAllStats(statsData.statsData)
-
+    setAllStats(statsData.statsData);
   }, [params.activityId]);
 
   const doAthleteSelectionChanged = (ath) => {
     setSelectedAthlete(ath);
-    for (var ns=0; ns<allStats.length; ns++)
-    {
-      if (allStats[ns].athlete_id === ath.id)
-      {
-        setAthleteStats(allStats[ns])
+    for (var ns = 0; ns < allStats.length; ns++) {
+      if (allStats[ns].athlete_id === ath.id) {
+        setAthleteStats(allStats[ns]);
         break;
       }
     }
@@ -135,7 +140,7 @@ function ActivityDetails() {
     localStorage.setItem("videoFileUrl", "");
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     setDeliveriesFileName(localStorage.getItem("deliveriesFileName"));
     setDeliveriesFileData(localStorage.getItem("deliveriesFileData"));
     setVideoFileName(localStorage.getItem("videoFileName"));
@@ -167,11 +172,19 @@ function ActivityDetails() {
                 Bowling Report
               </label>
             </div>
-            <div className="my-10">
-              <h2 className="mt-4 text-2xl font-bold">
-                {activity.name.replace(/_/g, " ").toUpperCase()}
-              </h2>
-              <p>{secsToDateTime(activity.start_time).toDateString()}</p>
+            <div className="flex my-4">
+              <div className="mr-4">
+                <img className="h-16" src={getHomeTeamLogo(activity)} />
+              </div>
+              <div className="">
+                <h2 className="text-2xl font-bold">
+                  {activity.name.replace(/_/g, " ").toUpperCase()}
+                </h2>
+                <p>{secsToDateTime(activity.start_time).toDateString()}</p>
+              </div>
+              <div className="ml-4">
+                <img className="h-16" src={getAwayTeamLogo(activity)} />
+              </div>
             </div>
             <input
               type="checkbox"
@@ -248,20 +261,20 @@ function ActivityDetails() {
                   />
                 </div>
                 <div className="modal-action">
-                <label
-                  htmlFor="bowling-report-modal"
-                  className="btn btn-primary"
-                >
-                  Cancel
-                </label>
-                <label
-                  htmlFor="bowling-report-modal"
-                  className="btn btn-primary"
-                  onClick={() => doBowlingReport()}
-                >
-                  Report
-                </label>
-              </div>
+                  <label
+                    htmlFor="bowling-report-modal"
+                    className="btn btn-primary"
+                  >
+                    Cancel
+                  </label>
+                  <label
+                    htmlFor="bowling-report-modal"
+                    className="btn btn-primary"
+                    onClick={() => doBowlingReport()}
+                  >
+                    Report
+                  </label>
+                </div>
               </div>
             </div>
             <div>

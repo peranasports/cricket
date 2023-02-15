@@ -146,3 +146,81 @@ export function drawPieSegment(ctx, x, y, radius, startangle, endangle, fill, st
   ctx.closePath()
 }
 
+export function getLogo(act) {
+  // console.log(activity.name)
+  if (act.tags.includes("T20 Domestic")) {
+    return require(`../components/assets/logos/bbl-logo.png`);
+  } else if (act.tags.includes("50 Over Domestic")) {
+    return require(`../components/assets/logos/marsh-logo.png`);
+  } else if (act.tags.includes("Multiday Domestic")) {
+    return require(`../components/assets/logos/shield-logo.png`);
+  } else if (act.name.toUpperCase().startsWith("HEAT")) {
+    return require(`../components/assets/logos/heat-logo.png`);
+  } else if (act.name.toUpperCase().startsWith("BULLS")) {
+    return require(`../components/assets/logos/bulls-logo.png`);
+  } else if (act.name.toUpperCase().startsWith("QLD")) {
+    return require(`../components/assets/logos/qld-logo.png`);
+  } else {
+    return require(`../components/assets/logo64.png`);
+  }
+}
+
+export function getHomeTeamLogo(act) {
+  // console.log(activity.name)
+  if (act.name.toUpperCase().startsWith("HEAT")) {
+    return require(`../components/assets/logos/heat-logo.png`);
+  } else if (act.name.toUpperCase().startsWith("BULLS")) {
+    return require(`../components/assets/logos/bulls-logo.png`);
+  } else if (act.name.toUpperCase().startsWith("QLD")) {
+    return require(`../components/assets/logos/qld-logo.png`);
+  } else {
+    return require(`../components/assets/logo64.png`);
+  }
+}
+
+export function getAwayTeamLogo(act) {
+  const actname = act.name.toUpperCase();
+  // console.log(actname)
+  if (actname.includes("V THUNDER")) {
+    return require(`../components/assets/logos/thunder-logo.png`);
+  } else if (actname.includes("V SIXERS")) {
+    return require(`../components/assets/logos/sixers-logo.png`);
+  } else if (actname.includes("V STARS")) {
+    return require(`../components/assets/logos/stars-logo.png`);
+  } else if (actname.includes("V RENEGADES")) {
+    return require(`../components/assets/logos/renegades-logo.png`);
+  } else if (actname.includes("V SCORCHERS")) {
+    return require(`../components/assets/logos/scorchers-logo.png`);
+  } else if (actname.includes("V STRIKERS")) {
+    return require(`../components/assets/logos/strikers-logo.png`);
+  } else if (actname.includes("V HURRICANES")) {
+    return require(`../components/assets/logos/hurricanes-logo.png`);
+  } else if (actname.includes("V HEAT")) {
+    return require(`../components/assets/logos/heat-logo.png`);
+  } else if (actname.includes("V WA")) {
+      return require(`../components/assets/logos/wa-logo.png`);
+  } else if (actname.includes("V VIC")) {
+      return require(`../components/assets/logos/vic-logo.png`);
+  } else if (actname.includes("V SA")) {
+      return require(`../components/assets/logos/sa-logo.png`);
+  } else if (actname.includes("V TAS")) {
+      return require(`../components/assets/logos/tasmania-logo.png`);
+  } else if (actname.includes("V NSW")) {
+      return require(`../components/assets/logos/nsw-logo.png`);
+  } else if (actname.includes("V QLD")) {
+      return require(`../components/assets/logos/bulls-logo.png`);
+              } else {
+    return null;
+    //   return require(`../components/assets/logo64.png`);
+  }
+}
+
+export function getPlayerPhoto(pl) {
+  const fn = pl.first_name + `-` + pl.last_name + `.png`;
+  try {
+    return require(`../components/assets/photos/${fn}`);
+  } catch {
+    return require(`../components/assets/photos/male-no-photo.png`);
+  }
+}
+

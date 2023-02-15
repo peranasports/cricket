@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { getPlayerPhoto } from "../../utils/utils";
 import Select from "react-select";
 
 function PlayerStats({ athlete, stats, allParameters }) {
-  const [allParams, setAllParams] = useState([])
-  const [selectedParams, setSelectedParams] = useState([])
+  const [allParams, setAllParams] = useState([]);
+  const [selectedParams, setSelectedParams] = useState([]);
   const [params, setParams] = useState([
     "acceleration_band1_total_distance",
     "acceleration_band1_total_duration",
@@ -15,34 +16,20 @@ function PlayerStats({ athlete, stats, allParameters }) {
   const [statsRows, setStatsRows] = useState([]);
   const [, forceUpdate] = useState(0);
 
-  function getPhoto(pl) {
-    const fn = pl.first_name + `-` + pl.last_name + `.png`;
-    console.log(fn);
-
-    // return require(fn);
-    try {
-      return require(`../assets/photos/${fn}`);
-    } catch {
-      return require(`../assets/photos/male-no-photo.png`);
-    }
-  }
-
   function handleSelectParameters(data) {
     setSelectedParams(data);
   }
 
-  const doParametersModalClosed = () =>
-  {
-    var ps = []
-    for (var np=0; np<selectedParams.length; np++)
-    {
-      ps.push(selectedParams[np].slug)
+  const doParametersModalClosed = () => {
+    var ps = [];
+    for (var np = 0; np < selectedParams.length; np++) {
+      ps.push(selectedParams[np].slug);
     }
-    setParams(ps)
-    doStatsRows(ps)
-    localStorage.setItem("selectedParameters", ps)
+    setParams(ps);
+    doStatsRows(ps);
+    localStorage.setItem("selectedParameters", ps);
     forceUpdate((n) => !n);
-  }
+  };
 
   const doStatsRows = (ps) => {
     const cols = 3;
@@ -66,95 +53,99 @@ function PlayerStats({ athlete, stats, allParameters }) {
   };
 
   useEffect(() => {
-    const po = localStorage.getItem("selectedParameters")
-    if (po !== null)
-    {
-      const prs = po.split(",")
-      setParams(prs)
+    const po = localStorage.getItem("selectedParameters");
+    if (po !== null) {
+      const prs = po.split(",");
+      setParams(prs);
       doStatsRows(prs);
-    }
-    else
-    {
+    } else {
       doStatsRows(params);
     }
-    var aps = []
-    var selps = []
-    allParameters.sort((a,b) => (a.slug > b.slug) ? 1 : ((b.slug > a.slug) ? -1 : 0))
-    for (var np=0; np<allParameters.length; np++)
-    {
-      aps.push({value:np, label:allParameters[np].name, slug:allParameters[np].slug})
-      if (params.includes(allParameters[np].slug))
-      {
-        var exists = false
-        for (var nn=0; nn<selps.length; nn++)
-        {
-          if (selps[nn].slug === allParameters[np].slug)
-          {
-            exists = true
-            break
+    var aps = [];
+    var selps = [];
+    allParameters.sort((a, b) =>
+      a.slug > b.slug ? 1 : b.slug > a.slug ? -1 : 0
+    );
+    for (var np = 0; np < allParameters.length; np++) {
+      aps.push({
+        value: np,
+        label: allParameters[np].name,
+        slug: allParameters[np].slug,
+      });
+      if (params.includes(allParameters[np].slug)) {
+        var exists = false;
+        for (var nn = 0; nn < selps.length; nn++) {
+          if (selps[nn].slug === allParameters[np].slug) {
+            exists = true;
+            break;
           }
         }
-        if (!exists)
-        {
-          selps.push({value:np, label:allParameters[np].name, slug:allParameters[np].slug})
+        if (!exists) {
+          selps.push({
+            value: np,
+            label: allParameters[np].name,
+            slug: allParameters[np].slug,
+          });
         }
       }
     }
-    setAllParams(aps)
-    setSelectedParams(selps)
+    setAllParams(aps);
+    setSelectedParams(selps);
   }, [athlete.id]);
 
   return (
     <>
-      <div>
+      <div className="card shadow-md compact side bg-base-900 rounded-lg">
         <div className="flex justify-between">
-        <h3 className="text-2xl font-bold mb-4">
-          {athlete.first_name.toUpperCase()} {athlete.last_name.toUpperCase()}
-        </h3>
-        <label className="btn btn-primary btn-sm" htmlFor="parameters-modal">Parameters</label>
+          <h3 className="mx-4 my-4 text-2xl font-bold">
+            {athlete.first_name.toUpperCase()} {athlete.last_name.toUpperCase()}
+          </h3>
+          <label className="btn mx-4 my-4 btn-primary btn-sm" htmlFor="parameters-modal">
+            Parameters
+          </label>
         </div>
 
         <input type="checkbox" id="parameters-modal" className="modal-toggle" />
-          <div className="modal w-full h-full">
-            <div className="modal-box">
-              <h3 className="mb-4 font-bold text-2xl">Parameters</h3>
-              <div className="form">
-                <div className="my-4">
-                  <p className="text-xs">Paramters</p>
-                  <div className="flex-col justify-between">
-                    <Select
-                      id="paramsSelect"
-                      name="paramsSelect"
-                      onChange={handleSelectParameters}
-                      className="mt-2 block w-full border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 text-lg sm:text-md"
-                      options={allParams}
-                      value={selectedParams}
-                      isMulti
-                    />
-                    <button
-                      className="btn btn-sm btn-secondary mt-2"
-                      onClick={() => setSelectedParams([])}
-                    >
-                      Clear Selection
-                    </button>
-                  </div>
+        <div className="modal w-full h-full">
+          <div className="modal-box">
+            <h3 className="mb-4 font-bold text-2xl">Parameters</h3>
+            <div className="form">
+              <div className="my-4">
+                <p className="text-xs">Paramters</p>
+                <div className="flex-col justify-between">
+                  <Select
+                    id="paramsSelect"
+                    name="paramsSelect"
+                    onChange={handleSelectParameters}
+                    className="mt-2 block w-full border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 text-lg sm:text-md"
+                    options={allParams}
+                    value={selectedParams}
+                    isMulti
+                  />
                 </div>
               </div>
-              <div className="modal-action">
-                <label
-                  htmlFor="parameters-modal"
-                  className="btn btn-primary"
-                  onClick={() => doParametersModalClosed()}
-                >
-                  Close
-                </label>
-              </div>
+            </div>
+            <div className="modal-action">
+              <label
+                htmlFor="parameters-modal"
+                className="btn btn-primary"
+              >
+                Cancel
+              </label>
+              <label
+                htmlFor="parameters-modal"
+                className="btn btn-primary"
+                onClick={() => doParametersModalClosed()}
+              >
+                Apply
+              </label>
             </div>
           </div>
+        </div>
 
         <div className="flex w-full">
           <div className="my-2 shadow w-80 h-120">
-            <img src={getPhoto(athlete)} alt="Profile" />
+            <img src={getPlayerPhoto(athlete)} alt="Profile" />
           </div>
           {stats === null ? (
             <></>
