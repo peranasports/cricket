@@ -11,6 +11,8 @@ export const CatapultAPIProvider = ({ children }) => {
     activity: {},
     sensordata: [],
     deliveriesData: [],
+    statsData: [],
+    parametersData: [],
     // token: null,
     message: null,
     loading: false,

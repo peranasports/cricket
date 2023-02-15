@@ -2,17 +2,6 @@ const CATAPULT_API_URL = process.env.REACT_APP_CATAPULT_API_URL; //"https://conn
 const CATAPULT_API_WRAPPER_URL = process.env.REACT_APP_CATAPULT_API_WRAPPER_URL; //"https://connect-au.catapultsports.com/api/v6/"
 
 export const getActivities = async (token) => {
-  // var myHeaders = new Headers();
-  // myHeaders.append("Authorization", "Bearer " + token);
-
-  // var requestOptions = {
-  //   method: "GET",
-  //   headers: myHeaders,
-  //   redirect: "follow",
-  // };
-  // var activitiesData = null;
-  // await fetch(CATAPULT_API_URL + "activities", requestOptions)
-
   var requestOptions = {
     method: "GET",
     redirect: "follow",
@@ -238,4 +227,57 @@ export const getDeliveriesAndSensorDataForAthletesInActivity = async (
     .catch((error) => console.log("error", error));
 
   return { deliveriesData: deliveries, sensordata: sensordata };
+};
+
+export const getStatsInActivity = async (
+  token,
+  activityId
+) => {
+  var requestOptions = {
+    method: "POST",
+    redirect: "follow",
+  };
+
+  var stats = null;
+  var surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetStatsInActivity?token=" +
+    token +
+    "&apiurl=" +
+    CATAPULT_API_URL +
+    "&activityid=" +
+    activityId;
+  await fetch(surl, requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      stats = JSON.parse(result);
+    })
+    .catch((error) => console.log("error", error));
+
+  return { statsData: stats };
+};
+
+export const getParameters = async (token) => {
+  var requestOptions = {
+    method: "GET",
+    redirect: "follow",
+  };
+
+  var parametersData = null;
+  const surl =
+    CATAPULT_API_WRAPPER_URL +
+    "GetParameters?token=" +
+    token +
+    "&apiurl=" +
+    CATAPULT_API_URL;
+  await fetch(surl, requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      var parameters = JSON.parse(result);
+      // console.log(activities);
+      parametersData = { parameters: parameters };
+    })
+    .catch((error) => console.log("error", error));
+
+  return parametersData;
 };

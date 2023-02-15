@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
 function AthleteItem({ athlete, onAthleteSelected }) {
-  const toggleAthleteSelect = () => {
-    athlete.selected = !athlete.selected;
+
+  const doAthleteSelect = () => {
     onAthleteSelected(athlete);
   };
 
@@ -22,7 +22,7 @@ function AthleteItem({ athlete, onAthleteSelected }) {
    }
   return (
     <>
-      <div className="mb-1 rounded-md card-compact bg-base-200 hover:bg-base-300">
+      <div className="mb-1 rounded-md card-compact bg-base-200 hover:bg-base-300" onClick={() => doAthleteSelect()}>
         <div className="flex justify-between">
           <div className="flex space-x-2">
             {/* <input

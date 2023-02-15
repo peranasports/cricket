@@ -1,4 +1,3 @@
-
 const CatapultAPIReducer = (state, action) => {
   switch (action.type) {
     case "GET_ACTIVITIES":
@@ -30,14 +29,26 @@ const CatapultAPIReducer = (state, action) => {
         deliveriesData: action.payload.deliveriesData,
         loading: false,
       };
-      case "GET_DELIVERIES_AND_SENSOR_DATA_FOR_ATHLETES_IN_ACTIVITY":
-        return {
-          ...state,
-          deliveriesData: action.payload.deliveriesData,
-          sensorData: action.payload.sensordata,
-          loading: false,
-        };
-      case "SET_LOADING":
+    case "GET_DELIVERIES_AND_SENSOR_DATA_FOR_ATHLETES_IN_ACTIVITY":
+      return {
+        ...state,
+        deliveriesData: action.payload.deliveriesData,
+        sensorData: action.payload.sensordata,
+        loading: false,
+      };
+    case "GET_STATS_IN_ACTIVITY":
+      return {
+        ...state,
+        statsData: action.payload.statsData,
+        loading: false,
+      };
+    case "GET_PARAMETERS":
+      return {
+        ...state,
+        parametersData: action.payload.parametersData,
+        loading: false,
+      };
+    case "SET_LOADING":
       return {
         ...state,
         message: action.payload.message,

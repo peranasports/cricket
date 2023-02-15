@@ -22,14 +22,7 @@ function AthletesList({ athletes, onAthleteSelectionChanged }) {
 
     const doAthleteSelected = (ath) =>
     {
-        for (var i = 0; i < athletes.length; i++) {
-            if (ath.id === athletes[i].id)
-            {
-                athletes[i].selected = ath.selected
-                break
-            }
-        }
-        onAthleteSelectionChanged(athletes)
+        onAthleteSelectionChanged(ath)
     }
     return (
         <>
