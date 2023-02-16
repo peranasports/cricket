@@ -2,6 +2,7 @@ import "./input.css";
 import "react-toastify/dist/ReactToastify.css";
 import { CookiesProvider } from "react-cookie";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { AlertProvider } from "./context/Alert/AlertContext";
 import { CatapultAPIProvider } from "./context/CatapultAPI/CatapultAPIContext";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -13,6 +14,7 @@ import BowlingReport from "./pages/BowlingReport";
 import ActivityDetails from "./components/activities/ActivityDetails";
 import DeliveriesReport from "./components/reports/DeliveriesReport";
 import LoadSavedData from "./pages/LoadSavedData";
+import CatapultSensorDataPage from "./pages/CatapultSensorDataPage";
 
 function App() {
   return (
@@ -31,6 +33,7 @@ function App() {
                     element={<ActivityDetails />}
                   />
                   <Route path="/bowlingreport" element={<BowlingReport />} />
+                  <Route path="/catapultsensordata" element={<CatapultSensorDataPage />} />
                   <Route path="/deliveries" element={<DeliveriesReport />} />
                   <Route path="/*" element={<NotFound />} />
                 </Routes>

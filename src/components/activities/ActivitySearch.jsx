@@ -3,13 +3,15 @@ import { useState, useContext } from 'react'
 import AlertContext from '../../context/Alert/AlertContext'
 import CatapultAPIContext from '../../context/CatapultAPI/CatapultAPIContext'
 import { getActivities } from '../../context/CatapultAPI/CatapultAPIAction'
-import { useCookies } from 'react-cookie'
+// import { useCookies } from 'react-cookie'
+import { toast } from 'react-toastify'
+import Spinner from '../layout/Spinner'
 
 function ActivitySearch() {
   const [text, setText] = useState('')
-  const { activities, dispatch } = useContext(CatapultAPIContext)
+  const { activities, loading, dispatch } = useContext(CatapultAPIContext)
   const { setAlert } = useContext(AlertContext)
-  const [cookies, setCookie] = useCookies(['token'])
+  // const [cookies, setCookie] = useCookies(['token'])
 
   const handleChange = (e) => setText(e.target.value)
 
@@ -17,26 +19,40 @@ function ActivitySearch() {
     e.preventDefault()
 
     if (text === '') {
-      setAlert('Please enter token', 'error')
+      toast('Please enter token', 'error')
     } else {
+      localStorage.setItem("CatapultToken", text)
       dispatch({ type: 'SET_LOADING', payload: {message: "Loading activities..."} })
-      setCookie('token', text, { path: '/' })
+      // setCookie('token', text, { path: '/' })
       const activitiesData = await getActivities(text)
-      dispatch({ type: 'GET_ACTIVITIES', payload: activitiesData })
+      if (activitiesData === null)
+      {
+        toast("Invalid token. Please check.");
+        dispatch({ type: 'CLEAR_LOADING', payload: null })
+      }
+      else
+      {
+        dispatch({ type: 'GET_ACTIVITIES', payload: activitiesData })
+      }
     }
   }
 
   useEffect(() => {
-    var token = cookies.token
+    // var token = cookies.token
+    var token = localStorage.getItem("CatapultToken")
     if (token !== undefined) {
       setText(token)
     }
-}, [cookies.token])
+}, [])
 
   // if (activities === undefined)
   // {
   //   return <></>
   // }
+  if (loading)
+  {
+    <Spinner />
+  }
 
   return (
     <div className=''>
@@ -47,7 +63,7 @@ function ActivitySearch() {
             <div className='flex'>
               <input
                 type='text'
-                className='w-full pr-40 bg-gray-200 input input-md rounded-xs text-black border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500'
+                className='w-full bg-gray-200 input input-md rounded-xs text-black border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500'
                 placeholder='Catapult Token'
                 value={text}
                 onChange={handleChange}

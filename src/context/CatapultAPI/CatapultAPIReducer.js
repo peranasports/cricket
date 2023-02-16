@@ -54,6 +54,11 @@ const CatapultAPIReducer = (state, action) => {
         message: action.payload.message,
         loading: true,
       };
+    case "CLEAR_LOADING":
+      return {
+        ...state,
+        loading: false,
+      };
     case "CLEAR_ACTIVITIES":
       return {
         ...state,

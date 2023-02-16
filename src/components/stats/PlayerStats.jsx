@@ -100,47 +100,12 @@ function PlayerStats({ athlete, stats, allParameters }) {
           <h3 className="mx-4 my-4 text-2xl font-bold">
             {athlete.first_name.toUpperCase()} {athlete.last_name.toUpperCase()}
           </h3>
-          <label className="btn mx-4 my-4 btn-primary btn-sm" htmlFor="parameters-modal">
+          <label
+            className="btn mx-4 my-4 btn-primary btn-sm"
+            htmlFor="parameters-modal"
+          >
             Parameters
           </label>
-        </div>
-
-        <input type="checkbox" id="parameters-modal" className="modal-toggle" />
-        <div className="modal w-full h-full">
-          <div className="modal-box">
-            <h3 className="mb-4 font-bold text-2xl">Parameters</h3>
-            <div className="form">
-              <div className="my-4">
-                <p className="text-xs">Paramters</p>
-                <div className="flex-col justify-between">
-                  <Select
-                    id="paramsSelect"
-                    name="paramsSelect"
-                    onChange={handleSelectParameters}
-                    className="mt-2 block w-full border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 text-lg sm:text-md"
-                    options={allParams}
-                    value={selectedParams}
-                    isMulti
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="modal-action">
-              <label
-                htmlFor="parameters-modal"
-                className="btn btn-primary"
-              >
-                Cancel
-              </label>
-              <label
-                htmlFor="parameters-modal"
-                className="btn btn-primary"
-                onClick={() => doParametersModalClosed()}
-              >
-                Apply
-              </label>
-            </div>
-          </div>
         </div>
 
         <div className="flex w-full">
@@ -178,6 +143,42 @@ function PlayerStats({ athlete, stats, allParameters }) {
               ))}
             </div>
           )}
+        </div>
+      </div>
+      <div>
+        <input type="checkbox" id="parameters-modal" className="modal-toggle" />
+        <div className="modal">
+          <div className="modal-box">
+            <h3 className="mb-4 font-bold text-2xl">Parameters</h3>
+            <div className="form">
+              <div className="my-4">
+                <p className="text-xs">Paramters</p>
+                <div className="flex-col justify-between">
+                  <Select
+                    id="paramsSelect"
+                    name="paramsSelect"
+                    onChange={handleSelectParameters}
+                    className="mt-2 block w-full border-gray-300 shadow-sm focus:border-gray-500 focus:ring-gray-500 text-lg sm:text-md"
+                    options={allParams}
+                    value={selectedParams}
+                    isMulti
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="modal-action">
+              <label htmlFor="parameters-modal" className="btn btn-primary">
+                Cancel
+              </label>
+              <label
+                htmlFor="parameters-modal"
+                className="btn btn-primary"
+                onClick={() => doParametersModalClosed()}
+              >
+                Apply
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </>

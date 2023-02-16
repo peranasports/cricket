@@ -15,10 +15,7 @@ import {
 } from "../context/CatapultAPI/CatapultAPIAction";
 import Spinner from "../components/layout/Spinner";
 import DeliveryDetail from "../components/reports/DeliveryDetail";
-import DeliveriesList from "../components/Deliveries/DeliveriesList";
 import BowlingPanel from "../components/Deliveries/BowlingPanel";
-import BowlerStatsPanel from "../components/Deliveries/BowlerStatsPanel";
-import { useUser } from "../context/UserContext";
 
 function BowlingReport() {
   const location = useLocation();
@@ -41,9 +38,7 @@ function BowlingReport() {
   const [selectedBowler, setSelectedBowler] = useState(null);
   const [selectedParameter, setSelectedParameter] = useState(0);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
-  const { deliveriesData, token, loading, dispatch } =
-    useContext(CatapultAPIContext);
-  const { catapultToken } = useUser();
+  const { deliveriesData, token, loading, dispatch } = useContext(CatapultAPIContext);
 
   function CSVToArray(strData, strDelimiter) {
     // Check to see if the delimiter is defined. If not,
@@ -126,7 +121,7 @@ function BowlingReport() {
     return dd;
   }
 
-  const getAthletesDeliveries = useCallback(async () => {
+  const getAthletesDeliveries = useCallback(async (token) => {
     var xdels = [];
     const ddd = CSVToArray(deliveriesFileData, "\t");
     for (var nd = 1; nd < ddd.length; nd++) {
@@ -145,7 +140,7 @@ function BowlingReport() {
       var athid = athlete.id;
       dispatch({ type: "SET_LOADING", payload: {message: "Loading data for " + athlete.last_name + "..."}  });
       const dd = await getDeliveriesAndSensorDataForAthletesInActivity(
-        catapultToken,
+        token,
         activity.id,
         athid
       );
@@ -350,6 +345,8 @@ function BowlingReport() {
   };
 
   useEffect(() => {
+    var token = localStorage.getItem("CatapultToken")
+
     const vu = (videoFileUrl === null || videoFileUrl === "") ? onlineVideoFileUrl : videoFileUrl
     setVideoUrl(vu);
 
@@ -376,13 +373,13 @@ function BowlingReport() {
         else
         {
           setDeliveries([]);
-          getAthletesDeliveries();
+          getAthletesDeliveries(token);
         }  
       }
       else
       {
         setDeliveries([]);
-        getAthletesDeliveries();
+        getAthletesDeliveries(token);
       }
     }
   }, [activity.id]);

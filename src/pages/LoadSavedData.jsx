@@ -103,7 +103,7 @@ function LoadSavedData() {
             <p className="text-sm">Online Video URL</p>            
             <input
               type="text"
-              className='w-full pr-40 text-gray-500 bg-gray-200 input input-sm rounded-sm'
+              className='w-full text-gray-500 bg-gray-200 input input-sm rounded-sm'
               id="onlineVideoUrl"
               onChange={handleChange}
             />

@@ -20,10 +20,9 @@ import PlayerStats from "../stats/PlayerStats";
 function ActivityDetails() {
   const [aths, setAths] = useState(null);
   const params = useParams();
-  const { activity, athletes, loading, dispatch } =
+  const { activity, athletes, loading, token, dispatch } =
     useContext(CatapultAPIContext);
   const navigate = useNavigate();
-  const { catapultToken } = useUser();
   const [allStats, setAllStats] = useState(null);
   const [allParameters, setAllParameters] = useState(null);
   const [athleteStats, setAthleteStats] = useState(null);
@@ -38,42 +37,42 @@ function ActivityDetails() {
 
   const handleChange = (e) => setOnlineVideoFileUrl(e.target.value);
 
-  const getLatest = useCallback(async () => {
-    dispatch({
-      type: "SET_LOADING",
-      payload: { message: "Loading athletes in activity..." },
-    });
+  const getLatest = useCallback(
+    async (token) => {
+      dispatch({
+        type: "SET_LOADING",
+        payload: { message: "Loading athletes in activity..." },
+      });
 
-    const athletesData = await getAthletesInActivity(
-      catapultToken,
-      params.activityId
-    );
-    dispatch({ type: "GET_ATHLETES_IN_ACTIVITY", payload: athletesData });
-    if (athletesData.athletes !== undefined) {
-      setAths(athletesData.athletes);
-    }
+      const athletesData = await getAthletesInActivity(
+        token,
+        params.activityId
+      );
+      dispatch({ type: "GET_ATHLETES_IN_ACTIVITY", payload: athletesData });
+      if (athletesData.athletes !== undefined) {
+        setAths(athletesData.athletes);
+      }
 
-    dispatch({
-      type: "SET_LOADING",
-      payload: { message: "Loading parameters..." },
-    });
+      dispatch({
+        type: "SET_LOADING",
+        payload: { message: "Loading parameters..." },
+      });
 
-    const paramsData = await getParameters(catapultToken);
-    dispatch({ type: "GET_PARAMETERS", payload: paramsData });
-    setAllParameters(paramsData.parameters);
+      const paramsData = await getParameters(token);
+      dispatch({ type: "GET_PARAMETERS", payload: paramsData });
+      setAllParameters(paramsData.parameters);
 
-    dispatch({
-      type: "SET_LOADING",
-      payload: { message: "Loading stats..." },
-    });
+      dispatch({
+        type: "SET_LOADING",
+        payload: { message: "Loading stats..." },
+      });
 
-    const statsData = await getStatsInActivity(
-      catapultToken,
-      params.activityId
-    );
-    dispatch({ type: "GET_STATS_IN_ACTIVITY", payload: statsData });
-    setAllStats(statsData.statsData);
-  }, [params.activityId]);
+      const statsData = await getStatsInActivity(token, params.activityId);
+      dispatch({ type: "GET_STATS_IN_ACTIVITY", payload: statsData });
+      setAllStats(statsData.statsData);
+    },
+    [params.activityId]
+  );
 
   const doAthleteSelectionChanged = (ath) => {
     setSelectedAthlete(ath);
@@ -111,6 +110,14 @@ function ActivityDetails() {
     navigate("/bowlingreport", { state: st });
   };
 
+  const doSensorReport = () => {
+    const st = {
+      athletes: aths,
+      activity: activity,
+    };
+    navigate("/catapultsensordata", { state: st });
+  }
+
   const handleFileSelected = (e) => {
     const files = Array.from(e.target.files);
     console.log("file:", files[0]);
@@ -141,11 +148,12 @@ function ActivityDetails() {
   };
 
   useEffect(() => {
+    var token = localStorage.getItem("CatapultToken");
     setDeliveriesFileName(localStorage.getItem("deliveriesFileName"));
     setDeliveriesFileData(localStorage.getItem("deliveriesFileData"));
     setVideoFileName(localStorage.getItem("videoFileName"));
     setVideoFileUrl(localStorage.getItem("videoFileUrl"));
-    getLatest();
+    getLatest(token);
     // setTimeout(() => setCounter(!counter), 30000)
   }, [getLatest]);
 
@@ -164,13 +172,23 @@ function ActivityDetails() {
         <div className="drawer-content">
           <div className="mx-4 w-100 h-full">
             <div className="flex space-x-4 mt-2">
-              <label
-                htmlFor="bowling-report-modal"
+              {activity.sport_id !== "fd57bc14-d0ff-11e4-ad66-22000af8166b" ? (
+                <></>
+              ) : (
+                <label
+                  htmlFor="bowling-report-modal"
+                  className="flex btn btn-md btn-primary"
+                  // onClick={() => doBowlingReport()}
+                >
+                  Bowling Report
+                </label>
+              )}
+              <button
                 className="flex btn btn-md btn-primary"
-                // onClick={() => doBowlingReport()}
+                onClick={() => doSensorReport()}
               >
-                Bowling Report
-              </label>
+                Sensors Report
+              </button>
             </div>
             <div className="flex my-4">
               <div className="mr-4">
@@ -184,97 +202,6 @@ function ActivityDetails() {
               </div>
               <div className="ml-4">
                 <img className="h-16" src={getAwayTeamLogo(activity)} />
-              </div>
-            </div>
-            <input
-              type="checkbox"
-              id="bowling-report-modal"
-              className="modal-toggle"
-            />
-            <div className="modal">
-              <div className="modal-box">
-                <div>
-                  <div className="flex my-2">
-                    <input
-                      type="file"
-                      id="selectedFile"
-                      ref={dfRef}
-                      style={{ display: "none" }}
-                      onChange={handleFileSelected}
-                    />
-                    <input
-                      type="button"
-                      className="btn btn-sm w-60"
-                      value="Select deliveries file..."
-                      onClick={() =>
-                        document.getElementById("selectedFile").click()
-                      }
-                    />
-                    <label className="label ml-4">
-                      <span className="label-text">
-                        {deliveriesFileName === null ? "" : deliveriesFileName}
-                      </span>
-                    </label>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex">
-                    <input
-                      type="file"
-                      id="selectedVideo"
-                      ref={vfRef}
-                      style={{ display: "none" }}
-                      onChange={handleVideoSelected}
-                    />
-                    <input
-                      type="button"
-                      className="btn btn-sm w-60"
-                      value="Select video file..."
-                      onClick={() =>
-                        document.getElementById("selectedVideo").click()
-                      }
-                    />
-                    <label className="label ml-4">
-                      <span className="label-text">
-                        {videoFileName === null ? "" : videoFileName}
-                      </span>
-                    </label>
-                    {videoFileName !== null ? (
-                      <button
-                        className="btn btn-sm btn-ghost"
-                        onClick={() => doClearVideoFile()}
-                      >
-                        Clear
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                </div>
-                <div className="my-4">
-                  <p className="text-sm">Online Video URL</p>
-                  <input
-                    type="text"
-                    className="w-full pr-40 bg-gray-200 input input-sm rounded-sm"
-                    id="onlineVideoUrl"
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="modal-action">
-                  <label
-                    htmlFor="bowling-report-modal"
-                    className="btn btn-primary"
-                  >
-                    Cancel
-                  </label>
-                  <label
-                    htmlFor="bowling-report-modal"
-                    className="btn btn-primary"
-                    onClick={() => doBowlingReport()}
-                  >
-                    Report
-                  </label>
-                </div>
               </div>
             </div>
             <div>
@@ -300,6 +227,96 @@ function ActivityDetails() {
                 doAthleteSelectionChanged(ath)
               }
             />
+          </div>
+        </div>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          id="bowling-report-modal"
+          className="modal-toggle"
+        />
+        <div className="modal w-full max-w-5xl">
+          <div className="modal-box">
+            <div>
+              <div className="flex my-2">
+                <input
+                  type="file"
+                  id="selectedFile"
+                  ref={dfRef}
+                  style={{ display: "none" }}
+                  onChange={handleFileSelected}
+                />
+                <input
+                  type="button"
+                  className="btn btn-sm w-60"
+                  value="Select deliveries file..."
+                  onClick={() =>
+                    document.getElementById("selectedFile").click()
+                  }
+                />
+                <label className="label ml-4">
+                  <span className="label-text">
+                    {deliveriesFileName === null ? "" : deliveriesFileName}
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <div className="flex">
+                <input
+                  type="file"
+                  id="selectedVideo"
+                  ref={vfRef}
+                  style={{ display: "none" }}
+                  onChange={handleVideoSelected}
+                />
+                <input
+                  type="button"
+                  className="btn btn-sm w-60"
+                  value="Select video file..."
+                  onClick={() =>
+                    document.getElementById("selectedVideo").click()
+                  }
+                />
+                <label className="label ml-4">
+                  <span className="label-text">
+                    {videoFileName === null ? "" : videoFileName}
+                  </span>
+                </label>
+                {videoFileName !== null ? (
+                  <button
+                    className="btn btn-sm btn-ghost"
+                    onClick={() => doClearVideoFile()}
+                  >
+                    Clear
+                  </button>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
+            <div className="my-4">
+              <p className="text-sm">Online Video URL</p>
+              <input
+                type="text"
+                className="w-full bg-gray-200 input input-sm rounded-sm"
+                id="onlineVideoUrl"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="modal-action">
+              <label htmlFor="bowling-report-modal" className="btn btn-primary">
+                Cancel
+              </label>
+              <label
+                htmlFor="bowling-report-modal"
+                className="btn btn-primary"
+                onClick={() => doBowlingReport()}
+              >
+                Report
+              </label>
+            </div>
           </div>
         </div>
       </div>
