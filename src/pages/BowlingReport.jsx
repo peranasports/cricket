@@ -356,31 +356,34 @@ function BowlingReport() {
     }
     else
     {
-      var bobj = bowlingObject;
-      if (bobj === null) {
-        bobj = localStorage.getItem("BowlingObject");
-      }
-      if (bobj !== null) {
-        var bo = JSON.parse(bobj);
-        setBowlingObject(bo);
-        if (bo.activityId === activity.id) {
-          loadBowlingObject(bo)
-          if (vu !== null)
-          {
-            bo.videoUrl = vu
-          }
-        }
-        else
-        {
-          setDeliveries([]);
-          getAthletesDeliveries(token);
-        }  
-      }
-      else
-      {
-        setDeliveries([]);
-        getAthletesDeliveries(token);
-      }
+      setDeliveries([]);
+      getAthletesDeliveries(token);
+
+      // var bobj = bowlingObject;
+      // if (bobj === null) {
+      //   bobj = localStorage.getItem("BowlingObject");
+      // }
+      // if (bobj !== null) {
+      //   var bo = JSON.parse(bobj);
+      //   setBowlingObject(bo);
+      //   if (bo.activityId === activity.id) {
+      //     loadBowlingObject(bo)
+      //     if (vu !== null)
+      //     {
+      //       bo.videoUrl = vu
+      //     }
+      //   }
+      //   else
+      //   {
+      //     setDeliveries([]);
+      //     getAthletesDeliveries(token);
+      //   }  
+      // }
+      // else
+      // {
+      //   setDeliveries([]);
+      //   getAthletesDeliveries(token);
+      // }
     }
   }, [activity.id]);
 
