@@ -29,7 +29,7 @@ const GoogleMaps = ({ latitude, longitude, positions, ball }) => {
   }, [positions])
   
   return (
-    <div style={{ height: "240px", width: "300px" }}>
+    <div style={{ height: "300px", width: "300px" }}>
       <GoogleMapReact
         bootstrapURLKeys={{ key: GOOGLE_MAPS_API_KEY }}//"AIzaSyB7OXmzfQYua_1LEhRdqsoYzyJOPh9hGLg" }}
         defaultCenter={{ lat: latitude, lng: longitude }}
